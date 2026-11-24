@@ -1,0 +1,52 @@
+{
+  "macro": {
+    "version": 1,
+    "id": "g_No_capture",
+    "name": "No capture",
+    "kind": "manual",
+    "createdAt": 1795421693787,
+    "updatedAt": 1795421693787,
+    "screenWidth": 1080,
+    "screenHeight": 2400,
+    "settings": {
+      "loops": 1,
+      "loopDelay": 500,
+      "speed": 1,
+      "jitterPx": 0,
+      "jitterTimePct": 0,
+      "stopAfterMs": 0,
+      "scaleToScreen": true,
+      "safeMode": false,
+      "recordVideo": false,
+      "lockToPackage": "",
+      "launchPackage": "",
+      "tapInterval": 200,
+      "tapDuration": 50,
+      "swipeDuration": 300
+    },
+    "actions": [
+      {
+        "type": "WAIT_COLOR",
+        "delay": 0,
+        "duration": 0,
+        "x": 5,
+        "y": 5,
+        "color": "#FFFFFF",
+        "tolerance": 24,
+        "invert": false,
+        "stopOnTimeout": false,
+        "repeat": 1,
+        "interval": 100,
+        "enabled": true
+      }
+    ]
+  },
+  "library": [],
+  "trace": [
+    "0 state RUNNING",
+    "0 progress 1/1 1/1 No capture",
+    "3000 state FINISHED",
+    "3000 end no-capture steps=1 failed=0 met=0 timedOut=0",
+    "violations=0"
+  ]
+}

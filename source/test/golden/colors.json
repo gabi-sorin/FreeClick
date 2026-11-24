@@ -1,0 +1,136 @@
+{
+  "macro": {
+    "version": 1,
+    "id": "g_Colors",
+    "name": "Colors",
+    "kind": "manual",
+    "createdAt": 1795421693783,
+    "updatedAt": 1795421693783,
+    "screenWidth": 1080,
+    "screenHeight": 2400,
+    "settings": {
+      "loops": 1,
+      "loopDelay": 500,
+      "speed": 1,
+      "jitterPx": 0,
+      "jitterTimePct": 0,
+      "stopAfterMs": 0,
+      "scaleToScreen": true,
+      "safeMode": false,
+      "recordVideo": false,
+      "lockToPackage": "",
+      "launchPackage": "",
+      "tapInterval": 200,
+      "tapDuration": 50,
+      "swipeDuration": 300
+    },
+    "actions": [
+      {
+        "type": "WAIT_COLOR",
+        "delay": 0,
+        "duration": 0,
+        "x": 540,
+        "y": 1200,
+        "color": "#00FF00",
+        "tolerance": 24,
+        "invert": false,
+        "stopOnTimeout": false,
+        "repeat": 1,
+        "interval": 100,
+        "enabled": true
+      },
+      {
+        "type": "TAP",
+        "delay": 200,
+        "duration": 50,
+        "x": 540,
+        "y": 1200,
+        "repeat": 1,
+        "interval": 100,
+        "enabled": true
+      },
+      {
+        "type": "WAIT_COLOR",
+        "delay": 0,
+        "duration": 5000,
+        "x": 540,
+        "y": 1200,
+        "color": "#00FF00",
+        "tolerance": 10,
+        "invert": true,
+        "stopOnTimeout": false,
+        "repeat": 1,
+        "interval": 100,
+        "enabled": true
+      },
+      {
+        "type": "WAIT_COLOR",
+        "delay": 0,
+        "duration": 1500,
+        "x": 10,
+        "y": 10,
+        "color": "#FF0000",
+        "tolerance": 24,
+        "invert": false,
+        "stopOnTimeout": false,
+        "repeat": 1,
+        "interval": 100,
+        "enabled": true
+      },
+      {
+        "type": "TAP",
+        "delay": 100,
+        "duration": 50,
+        "x": 100,
+        "y": 100,
+        "repeat": 1,
+        "interval": 100,
+        "enabled": true
+      },
+      {
+        "type": "WAIT_COLOR",
+        "delay": 0,
+        "duration": 1000,
+        "x": 10,
+        "y": 10,
+        "color": "#FF0000",
+        "tolerance": 24,
+        "invert": false,
+        "stopOnTimeout": true,
+        "repeat": 1,
+        "interval": 100,
+        "enabled": true
+      },
+      {
+        "type": "TAP",
+        "delay": 0,
+        "duration": 50,
+        "x": 1,
+        "y": 1,
+        "repeat": 1,
+        "interval": 100,
+        "enabled": true
+      }
+    ]
+  },
+  "library": [],
+  "colors": {
+    "0": 0,
+    "2345": 63488,
+    "6000": 1193046
+  },
+  "trace": [
+    "2600 gesture [0/50:540.0,1200.0;]",
+    "7700 gesture [0/50:100.0,100.0;]",
+    "0 state RUNNING",
+    "0 progress 1/1 1/7 Colors",
+    "2600 progress 1/1 2/7 Colors",
+    "2650 progress 1/1 3/7 Colors",
+    "6100 progress 1/1 4/7 Colors",
+    "7700 progress 1/1 5/7 Colors",
+    "7750 progress 1/1 6/7 Colors",
+    "8800 state FINISHED",
+    "8800 end condition-timeout steps=6 failed=0 met=2 timedOut=2",
+    "violations=0"
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "macro": {
+    "version": 1,
+    "id": "g_Empty",
+    "name": "Empty",
+    "kind": "manual",
+    "createdAt": 1795421693788,
+    "updatedAt": 1795421693788,
+    "screenWidth": 1080,
+    "screenHeight": 2400,
+    "settings": {
+      "loops": 1,
+      "loopDelay": 500,
+      "speed": 1,
+      "jitterPx": 0,
+      "jitterTimePct": 0,
+      "stopAfterMs": 0,
+      "scaleToScreen": true,
+      "safeMode": false,
+      "recordVideo": false,
+      "lockToPackage": "",
+      "launchPackage": "",
+      "tapInterval": 200,
+      "tapDuration": 50,
+      "swipeDuration": 300
+    },
+    "actions": [
+      {
+        "type": "TAP",
+        "delay": 0,
+        "duration": 50,
+        "x": 1,
+        "y": 1,
+        "repeat": 1,
+        "interval": 100,
+        "enabled": false
+      }
+    ]
+  },
+  "library": [],
+  "trace": [
+    "0 state RUNNING",
+    "0 state FINISHED",
+    "0 end empty steps=0 failed=0 met=0 timedOut=0",
+    "violations=0"
+  ]
+}

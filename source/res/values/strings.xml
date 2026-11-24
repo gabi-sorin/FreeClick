@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FreeClick</string>
+    <string name="settings">Setări</string>
+    <string name="videos">Filmări</string>
+    <string name="a11y_summary">Panou plutitor pentru atingeri și swipe-uri automate</string>
+    <string name="a11y_description">FreeClick folosește serviciul de accesibilitate doar ca să execute atingerile și swipe-urile pe care le înregistrezi sau le configurezi, să afișeze panoul plutitor și să afle ce aplicație e deschisă (pentru oprirea automată). Nu citește conținutul ecranului și nu trimite date nicăieri.</string>
+</resources>

@@ -1,0 +1,75 @@
+{
+  "macro": {
+    "version": 1,
+    "id": "g_Scaled",
+    "name": "Scaled",
+    "kind": "manual",
+    "createdAt": 1795421693787,
+    "updatedAt": 1795421693787,
+    "screenWidth": 720,
+    "screenHeight": 1600,
+    "settings": {
+      "loops": 0,
+      "loopDelay": 500,
+      "speed": 1,
+      "jitterPx": 0,
+      "jitterTimePct": 0,
+      "stopAfterMs": 4321,
+      "scaleToScreen": true,
+      "safeMode": false,
+      "recordVideo": false,
+      "lockToPackage": "",
+      "launchPackage": "",
+      "tapInterval": 200,
+      "tapDuration": 50,
+      "swipeDuration": 300
+    },
+    "actions": [
+      {
+        "type": "TAP",
+        "delay": 300,
+        "duration": 50,
+        "x": 360,
+        "y": 800,
+        "repeat": 1,
+        "interval": 100,
+        "enabled": true
+      },
+      {
+        "type": "SWIPE",
+        "delay": 150,
+        "duration": 250,
+        "x": 0,
+        "y": 0,
+        "x2": 719,
+        "y2": 1599,
+        "repeat": 1,
+        "interval": 100,
+        "enabled": true
+      }
+    ]
+  },
+  "library": [],
+  "trace": [
+    "300 gesture [0/50:540.0,1200.0;]",
+    "500 gesture [0/250:0.0,0.0;1078.5,2398.5;]",
+    "1550 gesture [0/50:540.0,1200.0;]",
+    "1750 gesture [0/250:0.0,0.0;1078.5,2398.5;]",
+    "2800 gesture [0/50:540.0,1200.0;]",
+    "3000 gesture [0/250:0.0,0.0;1078.5,2398.5;]",
+    "4050 gesture [0/50:540.0,1200.0;]",
+    "4250 gesture [0/250:0.0,0.0;1078.5,2398.5;]",
+    "0 state RUNNING",
+    "300 progress 1/0 1/2 Scaled",
+    "500 progress 1/0 2/2 Scaled",
+    "1550 progress 2/0 1/2 Scaled",
+    "1750 progress 2/0 2/2 Scaled",
+    "2800 progress 3/0 1/2 Scaled",
+    "3000 progress 3/0 2/2 Scaled",
+    "4050 progress 4/0 1/2 Scaled",
+    "4250 progress 4/0 2/2 Scaled",
+    "4500 state FINISHED",
+    "4500 end time-limit steps=8 failed=0 met=0 timedOut=0",
+    "violations=0"
+  ]
+}

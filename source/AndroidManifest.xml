@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.freeclick"
+    android:versionCode="19"
+    android:versionName="2.5">
+
+    <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="34" />
+
+    <!-- Screen video recording runs as a foreground service. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+    <!-- 🌙 AFK mode: a foreground service keeps FreeClick alive during long runs (Android 14 needs a type). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <!-- 🌙 AFK mode: asks (with the system's own dialog) to be left out of battery optimisation. -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <!-- Notification with the "Stop" button while recording (Android 13+). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Scheduled macros (exact time if allowed, otherwise within a minute) + re-arm after reboot. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!-- Android 11+ package visibility: needed to list and open launchable apps
+         ("open this app before playing" / "only run in this app"). -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+        <!-- 🌙 AFK mode: the home screen (a crashed game falls back to it). -->
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.HOME" />
+        </intent>
+    </queries>
+
+    <application
+        android:name="com.freeclick.app.App"
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="true"
+        android:supportsRtl="true"
+        android:theme="@style/FreeClick">
+
+        <activity
+            android:name="com.freeclick.app.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Opened from the floating panel too; Back always leads to the home screen. -->
+        <activity
+            android:name="com.freeclick.app.ModeSettingsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name="com.freeclick.app.LibraryActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name="com.freeclick.app.EditorActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name="com.freeclick.app.CodeEditorActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name="com.freeclick.app.LabActivity"
+            android:exported="false"
+            android:label="Laborator" />
+
+        <activity
+            android:name="com.freeclick.app.DocsActivity"
+            android:exported="false"
+            android:label="Documentație" />
+
+        <activity
+            android:name="com.freeclick.app.SettingsActivity"
+            android:exported="false"
+            android:label="@string/settings" />
+
+        <activity
+            android:name="com.freeclick.app.VideoListActivity"
+            android:exported="false"
+            android:label="@string/videos" />
+
+        <!-- Invisible activity that only shows Android's screen-capture consent dialog.
+             Own task so that, when it closes, the app that was on screen comes back. -->
+        <activity
+            android:name="com.freeclick.app.CaptureRequestActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <!-- Home-screen shortcuts ("run this macro"). Exported because launchers start it,
+             but it only acts with the secret token that FreeClick put in its own shortcuts. -->
+        <activity
+            android:name="com.freeclick.app.ShortcutRunActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <!-- 📤 "Share → FreeClick": a message with a share code or a .freeclick.json file; asks before importing. -->
+        <activity
+            android:name="com.freeclick.app.ImportActivity"
+            android:exported="true"
+            android:label="Importă în FreeClick"
+            android:excludeFromRecents="true"
+            android:theme="@style/FreeClick">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/json" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="content" android:mimeType="application/json" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name="com.freeclick.app.ClickService"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
+        <service
+            android:name="com.freeclick.app.SessionService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse" />
+
+        <service
+            android:name="com.freeclick.app.VideoRecorderService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection" />
+
+        <!-- Quick Settings tile: open the panel / run the last macro. -->
+        <service
+            android:name="com.freeclick.app.QuickTileService"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <!-- Automation apps (Tasker, MacroDroid...) can start/stop macros.
+             Disabled at runtime unless the user turns it on in Settings. -->
+        <receiver
+            android:name="com.freeclick.app.TriggerReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.freeclick.action.RUN_MACRO" />
+                <action android:name="com.freeclick.action.STOP" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Internal: fires scheduled macros (not reachable from other apps). -->
+        <receiver
+            android:name="com.freeclick.app.ScheduleReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <!-- after an app update: alarms may be dropped, re-arm the schedules -->
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Internal: buttons of the panel's notification (only our own PendingIntents reach it). -->
+        <receiver
+            android:name="com.freeclick.app.ControlNotification$Receiver"
+            android:exported="false" />
+
+        <provider
+            android:name="com.freeclick.app.FileShareProvider"
+            android:authorities="com.freeclick.files"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+    </application>
+</manifest>

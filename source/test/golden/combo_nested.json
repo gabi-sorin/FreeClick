@@ -1,0 +1,238 @@
+{
+  "macro": {
+    "version": 1,
+    "id": "g_Combo",
+    "name": "Combo",
+    "kind": "combo",
+    "createdAt": 1795421693782,
+    "updatedAt": 1795421693782,
+    "screenWidth": 1080,
+    "screenHeight": 2400,
+    "settings": {
+      "loops": 2,
+      "loopDelay": 1000,
+      "speed": 1,
+      "jitterPx": 0,
+      "jitterTimePct": 0,
+      "stopAfterMs": 0,
+      "scaleToScreen": true,
+      "safeMode": false,
+      "recordVideo": false,
+      "lockToPackage": "",
+      "launchPackage": "",
+      "tapInterval": 200,
+      "tapDuration": 50,
+      "swipeDuration": 300
+    },
+    "actions": [
+      {
+        "type": "MACRO",
+        "delay": 300,
+        "duration": 0,
+        "x": 0,
+        "y": 0,
+        "macroId": "g_Sub_one",
+        "repeat": 2,
+        "interval": 100,
+        "enabled": true
+      },
+      {
+        "type": "MACRO",
+        "delay": 0,
+        "duration": 0,
+        "x": 0,
+        "y": 0,
+        "macroId": "does_not_exist",
+        "repeat": 1,
+        "interval": 100,
+        "enabled": true
+      },
+      {
+        "type": "WAIT",
+        "delay": 0,
+        "duration": 500,
+        "x": 0,
+        "y": 0,
+        "repeat": 1,
+        "interval": 100,
+        "enabled": true
+      },
+      {
+        "type": "MACRO",
+        "delay": 10,
+        "duration": 0,
+        "x": 0,
+        "y": 0,
+        "macroId": "g_Inner_combo",
+        "repeat": 1,
+        "interval": 100,
+        "enabled": true
+      }
+    ]
+  },
+  "library": [
+    {
+      "version": 1,
+      "id": "g_Sub_one",
+      "name": "Sub one",
+      "kind": "record",
+      "createdAt": 1795421693782,
+      "updatedAt": 1795421693782,
+      "screenWidth": 1080,
+      "screenHeight": 2400,
+      "settings": {
+        "loops": 1,
+        "loopDelay": 500,
+        "speed": 1,
+        "jitterPx": 0,
+        "jitterTimePct": 0,
+        "stopAfterMs": 0,
+        "scaleToScreen": true,
+        "safeMode": false,
+        "recordVideo": false,
+        "lockToPackage": "",
+        "launchPackage": "",
+        "tapInterval": 200,
+        "tapDuration": 50,
+        "swipeDuration": 300
+      },
+      "actions": [
+        {
+          "type": "TAP",
+          "delay": 500,
+          "duration": 50,
+          "x": 300,
+          "y": 300,
+          "repeat": 1,
+          "interval": 100,
+          "enabled": true
+        },
+        {
+          "type": "SWIPE",
+          "delay": 100,
+          "duration": 200,
+          "x": 300,
+          "y": 300,
+          "x2": 700,
+          "y2": 700,
+          "repeat": 1,
+          "interval": 100,
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "id": "g_Sub_two",
+      "name": "Sub two",
+      "kind": "manual",
+      "createdAt": 1795421693782,
+      "updatedAt": 1795421693782,
+      "screenWidth": 1080,
+      "screenHeight": 2400,
+      "settings": {
+        "loops": 1,
+        "loopDelay": 500,
+        "speed": 1,
+        "jitterPx": 0,
+        "jitterTimePct": 0,
+        "stopAfterMs": 0,
+        "scaleToScreen": true,
+        "safeMode": false,
+        "recordVideo": false,
+        "lockToPackage": "",
+        "launchPackage": "",
+        "tapInterval": 200,
+        "tapDuration": 50,
+        "swipeDuration": 300
+      },
+      "actions": [
+        {
+          "type": "TAP",
+          "delay": 50,
+          "duration": 50,
+          "x": 900,
+          "y": 900,
+          "repeat": 1,
+          "interval": 100,
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "id": "g_Inner_combo",
+      "name": "Inner combo",
+      "kind": "combo",
+      "createdAt": 1795421693782,
+      "updatedAt": 1795421693782,
+      "screenWidth": 1080,
+      "screenHeight": 2400,
+      "settings": {
+        "loops": 1,
+        "loopDelay": 500,
+        "speed": 1,
+        "jitterPx": 0,
+        "jitterTimePct": 0,
+        "stopAfterMs": 0,
+        "scaleToScreen": true,
+        "safeMode": false,
+        "recordVideo": false,
+        "lockToPackage": "",
+        "launchPackage": "",
+        "tapInterval": 200,
+        "tapDuration": 50,
+        "swipeDuration": 300
+      },
+      "actions": [
+        {
+          "type": "MACRO",
+          "delay": 70,
+          "duration": 0,
+          "x": 0,
+          "y": 0,
+          "macroId": "g_Sub_two",
+          "repeat": 3,
+          "interval": 100,
+          "enabled": true
+        }
+      ]
+    }
+  ],
+  "trace": [
+    "800 gesture [0/50:300.0,300.0;]",
+    "950 gesture [0/200:300.0,300.0;700.0,700.0;]",
+    "1650 gesture [0/50:300.0,300.0;]",
+    "1800 gesture [0/200:300.0,300.0;700.0,700.0;]",
+    "2630 gesture [0/50:900.0,900.0;]",
+    "2730 gesture [0/50:900.0,900.0;]",
+    "2830 gesture [0/50:900.0,900.0;]",
+    "4680 gesture [0/50:300.0,300.0;]",
+    "4830 gesture [0/200:300.0,300.0;700.0,700.0;]",
+    "5530 gesture [0/50:300.0,300.0;]",
+    "5680 gesture [0/200:300.0,300.0;700.0,700.0;]",
+    "6510 gesture [0/50:900.0,900.0;]",
+    "6610 gesture [0/50:900.0,900.0;]",
+    "6710 gesture [0/50:900.0,900.0;]",
+    "0 state RUNNING",
+    "800 progress 1/2 1/2 Sub one",
+    "950 progress 1/2 2/2 Sub one",
+    "1650 progress 1/2 1/2 Sub one",
+    "1800 progress 1/2 2/2 Sub one",
+    "2000 progress 1/2 3/4 Combo",
+    "2630 progress 1/2 1/1 Sub two",
+    "2730 progress 1/2 1/1 Sub two",
+    "2830 progress 1/2 1/1 Sub two",
+    "4680 progress 2/2 1/2 Sub one",
+    "4830 progress 2/2 2/2 Sub one",
+    "5530 progress 2/2 1/2 Sub one",
+    "5680 progress 2/2 2/2 Sub one",
+    "5880 progress 2/2 3/4 Combo",
+    "6510 progress 2/2 1/1 Sub two",
+    "6610 progress 2/2 1/1 Sub two",
+    "6710 progress 2/2 1/1 Sub two",
+    "6760 state FINISHED",
+    "6760 end done steps=16 failed=0 met=0 timedOut=0",
+    "violations=0"
+  ]
+}
