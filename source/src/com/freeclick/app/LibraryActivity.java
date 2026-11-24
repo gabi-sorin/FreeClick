@@ -67,7 +67,7 @@ public final class LibraryActivity extends Activity implements MacroRepository.C
         LinearLayout top = Ui.vertical(this);
         int p = Ui.dp(this, 16);
         top.setPadding(p, 0, p, 0);
-        top.addView(Ui.actionRow(this, "📥 Importă / 📤 partajează", new View.OnClickListener() {
+        top.addView(Ui.actionRow(this, "Importă sau partajează salvări", new View.OnClickListener() {
             @Override public void onClick(View v) { importMenu(v); }
         }));
         pasteBanner = Ui.vertical(this);
@@ -174,7 +174,7 @@ public final class LibraryActivity extends Activity implements MacroRepository.C
             TextView emptyDetail = Ui.muted(this, query.isEmpty()
                     ? (Macro.KIND_COMBO.equals(kind) ? "Nicio combinație încă. Apasă + ca să creezi una."
                     : Macro.KIND_SCRIPT.equals(kind) ? "Niciun script încă. Apasă + ca să scrii primul (îți arăt pe loc cum)."
-                    : "Nimic salvat încă. Salvează din panou: ≡ → Opțiuni → Salvează ca.")
+                    : "Alege un mod din ecranul principal și salvează de acolo când ai terminat. Salvările apar aici.")
                     : "Niciun rezultat.");
             emptyDetail.setPadding(0, Ui.dp(this, 6), 0, 0);
             empty.addView(emptyDetail);
@@ -207,8 +207,8 @@ public final class LibraryActivity extends Activity implements MacroRepository.C
                         .append(ActionFormatter.ms(MacroGraph.estimateDurationMs(m, repo)));
             }
             Schedules.Entry e = Schedules.get(this, m.id);
-            if (e != null) meta.append(String.format(Locale.US, " · ⏰ %02d:%02d", e.hour, e.minute));
-            if (AutoStart.appOf(m) != null) meta.append(" · ⚡");
+            if (e != null) meta.append(String.format(Locale.US, " · programat %02d:%02d", e.hour, e.minute));
+            if (AutoStart.appOf(m) != null) meta.append(" · pornire automată");
             TextView mt = Ui.text(this, meta.toString(), 13, Ui.MUTED, false);
             mt.setSingleLine(true);
             mt.setEllipsize(android.text.TextUtils.TruncateAt.END);
@@ -289,8 +289,8 @@ public final class LibraryActivity extends Activity implements MacroRepository.C
         final boolean script = Macro.KIND_SCRIPT.equals(m.kind);
         List<String> labels = new ArrayList<String>();
         if (script) labels.add("Lista de pași");
-        else labels.add("💻 Fă script din ea");
-        labels.addAll(Arrays.asList("📤 Partajează…", "Duplică", "⚡ Pornire automată (" + AutoStart.describe(this, m) + ")", "Programează…"));
+        else labels.add("Fă script din ea");
+        labels.addAll(Arrays.asList("Partajează…", "Duplică", "Pornire automată (" + AutoStart.describe(this, m) + ")", "Programează…"));
         if (Build.VERSION.SDK_INT >= 26) labels.add("Creează scurtătură");
         labels.add("Șterge");
         final List<String> l = labels;
@@ -300,8 +300,8 @@ public final class LibraryActivity extends Activity implements MacroRepository.C
     }
 
     private void act(String what, final Macro m) {
-        if (what.startsWith("⚡")) { AutoStart.dialog(this, m, null); return; }
-        if (what.startsWith("💻")) { toScript(m); return; }
+        if (what.startsWith("Pornire automată")) { AutoStart.dialog(this, m, null); return; }
+        if (what.startsWith("Fă script")) { toScript(m); return; }
         {
             {
                 if (what.startsWith("Încarcă")) loadIntoPanel(m);
@@ -314,7 +314,7 @@ public final class LibraryActivity extends Activity implements MacroRepository.C
                     Macro copy = m.duplicate(m.name + " (copie)");
                     if (save(copy) && Macro.KIND_SCRIPT.equals(m.kind)) App.get().shots().copyAll(m.id, copy.id);
                 }
-                else if (what.startsWith("📤")) {
+                else if (what.startsWith("Partajează")) {
                     ShareUi.share(LibraryActivity.this, java.util.Collections.singletonList(m), new Runnable() { public void run() { startExport(m); } });
                 }
                 else if (what.startsWith("Programează")) schedule(m);
@@ -462,7 +462,7 @@ public final class LibraryActivity extends Activity implements MacroRepository.C
     private String offeredClip;
 
     private void importMenu(View anchor) {
-        Ui.popup(anchor, Arrays.asList("📋 Lipește un cod copiat", "📁 Dintr-un fișier", "📤 Partajează mai multe…"), null, new Ui.OnPick() {
+        Ui.popup(anchor, Arrays.asList("Lipește un cod copiat", "Deschide un fișier", "Partajează mai multe…"), null, new Ui.OnPick() {
             @Override public void onPick(int i) {
                 if (i == 0) {
                     String clip = ShareUi.clipboardCode(LibraryActivity.this);
@@ -514,7 +514,7 @@ public final class LibraryActivity extends Activity implements MacroRepository.C
         card.setGravity(Gravity.CENTER_VERTICAL);
         card.setPadding(Ui.dp(this, 14), Ui.dp(this, 10), Ui.dp(this, 6), Ui.dp(this, 10));
         card.setBackground(Ui.surface(this, Ui.SURFACE_HIGH, 16));
-        card.addView(Ui.text(this, "📋 Ai copiat un cod FreeClick", 15, Ui.TEXT, true), Ui.weight(1));
+        card.addView(Ui.text(this, "Cod FreeClick copiat", 15, Ui.TEXT, true), Ui.weight(1));
         card.addView(Ui.colored(this, "Importă", Ui.ACCENT, new View.OnClickListener() {
             @Override public void onClick(View v) {
                 offeredClip = clip;

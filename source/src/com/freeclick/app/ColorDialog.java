@@ -51,7 +51,7 @@ final class ColorDialog {
                 })
                 .setNegativeButton("ANULEAZĂ", null);
         if (pickOnScreen != null) {
-            b.setNeutralButton("🎯 De pe ecran", new DialogInterface.OnClickListener() {
+            b.setNeutralButton("Alege de pe ecran", new DialogInterface.OnClickListener() {
                 @Override public void onClick(DialogInterface dlg, int w) { pickOnScreen.run(); }
             });
         }

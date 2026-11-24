@@ -31,7 +31,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 🌙 AFK mode (2.2.1): what keeps a long run going while nobody watches.
+ * AFK AFK mode (2.2.1): what keeps a long run going while nobody watches.
  * <ul>
  *   <li>every real run: the screen stays on (a 1 px window), also with the panel hidden;</li>
  *   <li>AFK on: a foreground service with its own notification (Android does not stop FreeClick),
@@ -104,7 +104,7 @@ final class AfkGuard {
 
     boolean active() { return macro != null; }
 
-    /** The 🌙 notification is up (then it carries the panel controls too). */
+    /** The AFK notification is up (then it carries the panel controls too). */
     boolean ownsNotification() { return active() && afk && SessionService.isRunning(); }
 
     // ------------------------------------------------------------------ run events from ClickService
@@ -116,7 +116,7 @@ final class AfkGuard {
         runUserPaused = false;
         pausedByAfk = false;
         if (again) {
-            host.log("🌙 Reluat de la capăt (" + watch.restartCount() + ")");
+            host.log("AFK Reluat de la capăt (" + watch.restartCount() + ")");
             note(true);
             updateAwake();
             return;
@@ -186,7 +186,7 @@ final class AfkGuard {
         main.postDelayed(tick, 1000);
         if (!prefs.sectionOpen("afk.hint.v1")) {
             prefs.setSectionOpen("afk.hint.v1", true);
-            host.toast("🌙 Mod AFK: ecranul rămâne aprins, iar dacă jocul se închide îl redeschid. Setări → 🌙 Mod AFK.");
+            host.toast("AFK Mod AFK: ecranul rămâne aprins, iar dacă jocul se închide îl redeschid. Setări → AFK Mod AFK.");
         }
     }
 
@@ -242,8 +242,8 @@ final class AfkGuard {
             case AfkWatch.PAUSE:
                 if (host.afkRunning()) {
                     pauseForAfk();
-                    host.toast("🌙 Pauză: jocul nu mai e pe ecran. Reiau când revii.");
-                    host.log("🌙 Pauză: jocul nu mai e pe ecran");
+                    host.toast("AFK Pauză: jocul nu mai e pe ecran. Reiau când revii.");
+                    host.log("AFK Pauză: jocul nu mai e pe ecran");
                 } else {
                     watch.hold(); // you had paused it yourself: AFK mode does not take over
                 }
@@ -254,7 +254,7 @@ final class AfkGuard {
                 break;
             case AfkWatch.ASK:
                 if (!pausedByAfk) { watch.hold(); break; }
-                showBar("🌙 Jocul nu mai e deschis. Îl redeschid în %d s", (int) (watch.askMs / 1000), new Runnable() {
+                showBar("AFK Jocul nu mai e deschis. Îl redeschid în %d s", (int) (watch.askMs / 1000), new Runnable() {
                     public void run() {
                         watch.hold();
                         host.toast("Bine, aștept. ▶ pe panou ca să continui.");
@@ -267,7 +267,7 @@ final class AfkGuard {
                 pausedByAfk = false;
                 host.afkStopForRestart();
                 launch(game);
-                host.log("🌙 Redeschid " + game);
+                host.log("AFK Redeschid " + game);
                 break;
             case AfkWatch.RESTART:
                 restarting = true;
@@ -278,7 +278,7 @@ final class AfkGuard {
             case AfkWatch.GIVE_UP: {
                 hideBar();
                 String why = "Jocul nu a mai pornit sau s-a închis de prea multe ori într-o oră, așa că m-am oprit.";
-                host.log("🌙 " + why);
+                host.log("AFK " + why);
                 SessionService.notifyEnded(ctx, why);
                 restarting = false;
                 if (host.afkRunning() || pausedByAfk) host.afkEnd();
@@ -373,14 +373,14 @@ final class AfkGuard {
         battery = b;
         if (b == AfkWatch.BATTERY_LOW) {
             pauseForAfk();
-            host.toast("🌙 Pauză: bateria e la " + level + "%. Continui când e pusă la încărcat.");
-            host.log("🌙 Pauză: baterie " + level + "%");
+            host.toast("AFK Pauză: bateria e la " + level + "%. Continui când e pusă la încărcat.");
+            host.log("AFK Pauză: baterie " + level + "%");
         } else if (b == AfkWatch.BATTERY_HOT) {
             pauseForAfk();
-            host.toast("🌙 Pauză: telefonul are " + Math.round(temp) + " °C. Continui când se răcește.");
-            host.log("🌙 Pauză: " + Math.round(temp) + " °C");
+            host.toast("AFK Pauză: telefonul are " + Math.round(temp) + " °C. Continui când se răcește.");
+            host.log("AFK Pauză: " + Math.round(temp) + " °C");
         } else {
-            host.log("🌙 Bateria e în regulă (" + level + "%, " + Math.round(temp) + " °C)");
+            host.log("AFK Bateria e în regulă (" + level + "%, " + Math.round(temp) + " °C)");
             maybeResume();
         }
     }
@@ -389,7 +389,7 @@ final class AfkGuard {
         if (!usable) {
             screenHold = true;
             pauseForAfk();
-            host.log("🌙 Pauză: ecranul s-a închis");
+            host.log("AFK Pauză: ecranul s-a închis");
         } else if (screenHold) {
             screenHold = false;
             maybeResume();
@@ -437,15 +437,15 @@ final class AfkGuard {
     /** The dim setting changed in Settings. */
     void settingsChanged() { updateAwake(); }
 
-    // ------------------------------------------------------------------ the 🌙 notification
-    private String title() { return "🌙 AFK · „" + (macro == null ? "" : macro.name) + "”"; }
+    // ------------------------------------------------------------------ the AFK notification
+    private String title() { return "AFK AFK · „" + (macro == null ? "" : macro.name) + "”"; }
 
     private String text() {
         StringBuilder s = new StringBuilder(AfkWatch.duration(System.currentTimeMillis() - startedWall));
         if (loops > 0) s.append(" · ciclul ").append(loops);
         int r = restartsBefore + watch.restartCount();
         if (r > 0) s.append(" · ").append(r).append(r == 1 ? " repornire" : " reporniri");
-        if (level >= 0) s.append(" · 🔋 ").append(level).append('%');
+        if (level >= 0) s.append(" · Baterie ").append(level).append('%');
         if (battery == AfkWatch.BATTERY_LOW) s.append(" · pauză: baterie");
         else if (battery == AfkWatch.BATTERY_HOT) s.append(" · pauză: cald");
         else if (screenHold) s.append(" · pauză: ecran închis");
@@ -568,8 +568,8 @@ final class AfkGuard {
             return;
         }
         if (System.currentTimeMillis() - j.optLong("beat") > 20 * 60000L) { deleteFile(); return; }
-        host.log("🌙 Sesiunea AFK a fost întreruptă de Android");
-        showBar("🌙 Android a oprit FreeClick. Reiau „" + m.name + "” în %d s", 10, new Runnable() {
+        host.log("AFK Sesiunea AFK a fost întreruptă de Android");
+        showBar("AFK Android a oprit FreeClick. Reiau „" + m.name + "” în %d s", 10, new Runnable() {
             public void run() { deleteFile(); host.toast("Bine, nu o reiau."); }
         }, new Runnable() {
             public void run() { resumeKilled(m, j); }

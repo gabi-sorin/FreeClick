@@ -179,8 +179,8 @@ final class MarkerLayer {
                 case LONG_PRESS: label = number + "L"; break;
                 case DOUBLE_TAP: label = number + "×2"; break;
                 case WAIT_COLOR: label = "C" + number; break;
-                case IMAGE: label = number + "🖼"; break;
-                case READ: label = (action.readMode == Action.READ_COLOR ? "🎨" : "📖") + number; break;
+                case IMAGE: label = "IMG " + number; break;
+                case READ: label = (action.readMode == Action.READ_COLOR ? "C" : "T") + number; break;
                 default: label = String.valueOf(number);
             }
             if (action.repeat > 1) label += "·" + action.repeat;
@@ -282,7 +282,7 @@ final class MarkerLayer {
                 if (!isZone(a) || !a.enabled) continue;
                 c.drawRect(a.x - loc[0], a.y - loc[1], a.x2 - loc[0], a.y2 - loc[1], read);
                 String name = a.varName == null || a.varName.isEmpty() ? "citire" : a.varName;
-                c.drawText("📖 " + name, a.x - loc[0], a.y - loc[1] - Ui.dp(getContext(), 4), readText);
+                c.drawText("TEXT: " + name, a.x - loc[0], a.y - loc[1] - Ui.dp(getContext(), 4), readText);
             }
             for (Action a : actions) {
                 if (a.type != Action.Type.SWIPE || !a.enabled) continue;

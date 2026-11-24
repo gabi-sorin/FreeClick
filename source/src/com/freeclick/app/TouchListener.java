@@ -167,7 +167,7 @@ final class TouchListener {
     private void onBlocked() {
         if (onBlocked != null) onBlocked.run();
         host.toast("Ascultarea directă a atingerilor nu merge bine pe telefonul ăsta: am oprit-o.");
-        host.log("👂 ascultarea directă oprită (atingerile nu ajungeau la ecran)");
+        host.log("Ascultarea directă oprită (atingerile nu ajungeau la ecran)");
     }
 
     // ------------------------------------------------------------------ what scripts ask

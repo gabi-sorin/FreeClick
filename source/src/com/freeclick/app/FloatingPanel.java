@@ -152,8 +152,8 @@ final class FloatingPanel {
 
     void setInfo(String s) {
         infoText = s == null ? "" : s;
-        if (infoText.startsWith("👂 ")) infoText = infoText.substring(3);
-        if (ear) infoText = "👂 " + infoText;
+        if (infoText.startsWith("Atingeri: ")) infoText = infoText.substring(10);
+        if (ear) infoText = "Atingeri: " + infoText;
         if (info != null) {
             info.setText(infoText);
             info.setVisibility(infoText.isEmpty() ? View.GONE : View.VISIBLE);

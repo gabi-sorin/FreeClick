@@ -130,14 +130,14 @@ final class ConsoleLayer {
         head.setGravity(Gravity.CENTER_VERTICAL);
         title = Ui.text(c, "⋮ Consolă", 13, Ui.LABEL, true);
         head.addView(title, Ui.weight(1));
-        stepsBtn = small(c, "👣", new View.OnClickListener() { public void onClick(View v) {
+        stepsBtn = small(c, "≡", new View.OnClickListener() { public void onClick(View v) {
             prefs.setConsoleSteps(!prefs.consoleSteps());
             showStepsState();
             toast(prefs.consoleSteps() ? "Consola arată și fiecare pas" : "Consola arată doar mesajele");
         } });
         head.addView(stepsBtn);
-        head.addView(small(c, "📋", new View.OnClickListener() { public void onClick(View v) { copy(); } }));
-        head.addView(small(c, "🗑", new View.OnClickListener() { public void onClick(View v) { clear(); } }));
+        head.addView(small(c, "⧉", new View.OnClickListener() { public void onClick(View v) { copy(); } }));
+        head.addView(small(c, "×", new View.OnClickListener() { public void onClick(View v) { clear(); } }));
         foldBtn = small(c, "—", new View.OnClickListener() { public void onClick(View v) { folded = !folded; applyFold(); } });
         head.addView(foldBtn);
         head.addView(small(c, "×", new View.OnClickListener() { public void onClick(View v) { hide(); } }));
@@ -182,7 +182,7 @@ final class ConsoleLayer {
         android.graphics.Point sz = Overlays.screenSize(ctx);
         l.height = folded ? Ui.dp(ctx, 20) : Math.round(sz.y * 0.26f);
         scroll.setLayoutParams(l);
-        foldBtn.setText(folded ? "⬜" : "—");
+        foldBtn.setText(folded ? "□" : "—");
         render();
     }
 

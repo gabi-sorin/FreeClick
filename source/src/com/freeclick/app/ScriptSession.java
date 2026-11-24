@@ -343,10 +343,10 @@ final class ScriptSession implements ScriptHost, ScriptRunner.Listener {
             java.io.OutputStream out = svc.getContentResolver().openOutputStream(uri);
             if (out == null) return false;
             try { got[0].compress(android.graphics.Bitmap.CompressFormat.PNG, 100, out); } finally { out.close(); }
-            print("📷 Captură salvată: Galerie → FreeClick → " + file, PlaybackEngine.PRINT_INFO);
+            print("Captură salvată: Galerie → FreeClick → " + file, PlaybackEngine.PRINT_INFO);
             return true;
         } catch (Exception e) {
-            print("📷 Nu am putut salva captura: " + e.getMessage(), PlaybackEngine.PRINT_WARN);
+            print("Nu am putut salva captura: " + e.getMessage(), PlaybackEngine.PRINT_WARN);
             return false;
         }
     }
@@ -540,7 +540,7 @@ final class ScriptSession implements ScriptHost, ScriptRunner.Listener {
         int p = Ui.dp(c, 10);
         bar.setPadding(p, p / 2, p, p / 2);
         bar.setBackground(Ui.rounded(0xF0140F45, Ui.dp(c, 14)));
-        String head = (ScriptRunner.WHY_BREAKPOINT.equals(why) ? "● Oprit la linia " : "👣 Linia ") + line;
+        String head = (ScriptRunner.WHY_BREAKPOINT.equals(why) ? "● Oprit la linia " : "Linia ") + line;
         bar.addView(Ui.text(c, head, 13, Ui.LABEL, true));
         TextView code = Ui.text(c, lineText(line), 14, 0xFFFFFFFF, false);
         code.setTypeface(android.graphics.Typeface.MONOSPACE);

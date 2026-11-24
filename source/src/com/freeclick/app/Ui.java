@@ -203,7 +203,7 @@ public final class Ui {
 
     /** Centered tip box, darker than the background. */
     public static View tipCard(Context c, String s) {
-        TextView t = text(c, "💡  " + s, 14, MUTED, false);
+        TextView t = text(c, "i  " + s, 14, MUTED, false);
         t.setGravity(Gravity.START);
         t.setLineSpacing(0, 1.15f);
         t.setBackground(surface(c, 0x99100C3A, 16));
@@ -372,42 +372,35 @@ public final class Ui {
         return card;
     }
 
-    /** Compact 2-column home tile, with a uniform icon, clear label and selected state. */
+    /** Compact full-width mode row: clear task choice without oversized dashboard tiles. */
     public static View homeModeCard(Context c, String icon, int tint, String title, String desc,
                                     boolean selected, View.OnClickListener l) {
-        LinearLayout card = vertical(c);
-        card.setGravity(Gravity.CENTER_HORIZONTAL);
-        int p = dp(c, 14);
-        card.setPadding(p, p, p, p);
-        GradientDrawable bg = rounded(selected ? 0xFF1B2C34 : SURFACE, dp(c, 18));
-        bg.setStroke(dp(c, selected ? 2 : 1), selected ? ACCENT : 0xFF252F3D);
+        LinearLayout card = horizontal(c);
+        card.setGravity(Gravity.CENTER_VERTICAL);
+        int p = dp(c, 12);
+        card.setPadding(p, dp(c, 10), p, dp(c, 10));
+        GradientDrawable bg = rounded(selected ? 0xFF1B2C34 : SURFACE, dp(c, 14));
+        bg.setStroke(dp(c, selected ? 1.5f : 1), selected ? ACCENT : 0xFF252F3D);
         card.setBackground(bg);
-        TextView glyph = text(c, icon, 36, tint, true);
+        TextView glyph = text(c, icon, 20, tint, true);
         glyph.setGravity(Gravity.CENTER);
-        card.addView(glyph, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(c, 54)));
-        TextView name = text(c, title, 17, TEXT, true);
-        name.setGravity(Gravity.CENTER);
-        name.setPadding(0, dp(c, 3), 0, 0);
-        card.addView(name);
+        glyph.setBackground(rounded((tint & 0x00FFFFFF) | 0x33000000, dp(c, 20)));
+        LinearLayout.LayoutParams glyphLp = new LinearLayout.LayoutParams(dp(c, 38), dp(c, 38));
+        glyphLp.rightMargin = dp(c, 12);
+        card.addView(glyph, glyphLp);
+        LinearLayout copy = vertical(c);
+        copy.addView(text(c, title, 15, TEXT, true));
         TextView detail = text(c, desc, 12, MUTED, false);
-        detail.setGravity(Gravity.CENTER);
-        detail.setMaxLines(2);
-        detail.setLineSpacing(0, 1.05f);
-        LinearLayout.LayoutParams detailLp = matchWrap();
-        detailLp.topMargin = dp(c, 3);
-        card.addView(detail, detailLp);
-        if (selected) {
-            TextView badge = text(c, "SELECTAT", 10, ON_ACCENT, true);
-            badge.setGravity(Gravity.CENTER);
-            badge.setLetterSpacing(0.06f);
-            badge.setPadding(dp(c, 10), dp(c, 4), dp(c, 10), dp(c, 4));
-            badge.setBackground(rounded(ACCENT, dp(c, 20)));
-            LinearLayout.LayoutParams badgeLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            badgeLp.topMargin = dp(c, 7);
-            card.addView(badge, badgeLp);
-        }
-        clickable(card, l, dp(c, 18));
-        card.setMinimumHeight(dp(c, 164));
+        detail.setSingleLine(true);
+        detail.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        copy.addView(detail);
+        card.addView(copy, weight(1));
+        TextView mark = text(c, selected ? "●" : "›", selected ? 12 : 23, selected ? ACCENT : MUTED, true);
+        mark.setGravity(Gravity.CENTER);
+        mark.setContentDescription(selected ? "Mod selectat" : "Deschide modulul");
+        card.addView(mark, new LinearLayout.LayoutParams(dp(c, 28), dp(c, 36)));
+        clickable(card, l, dp(c, 14));
+        card.setMinimumHeight(dp(c, 62));
         return card;
     }
 

@@ -44,18 +44,18 @@ final class MacroSettingsForm {
         speed = Ui.decimalRow(f, "Viteză (0.1 – 10)", s.speed);
 
         // ⚙ Avansat, one drop-down per area (only that area's settings)
-        Section adv = Section.add(f, "msf.adv", "⚙ Avansat", "Locație, Timp, Aplicație, Siguranță, Filmare");
-        Section pos = Section.nested(adv.body, "msf.pos", "📍 Locație", (s.scaleToScreen ? "adaptat la ecran" : "coordonate exacte")
+        Section adv = Section.add(f, "msf.adv", "Avansat", "Locație, Timp, Aplicație, Siguranță, Filmare");
+        Section pos = Section.nested(adv.body, "msf.pos", "Locație", (s.scaleToScreen ? "adaptat la ecran" : "coordonate exacte")
                 + (s.jitterPx > 0 ? " · abatere " + s.jitterPx + " px" : ""));
         scale = Ui.switchRow(pos.body, "Adaptează coordonatele la rezoluția ecranului", s.scaleToScreen, null);
         jitterPx = Ui.numberRow(pos.body, "Abatere poziție (px, ca la un om)", s.jitterPx, false);
 
-        Section time = Section.nested(adv.body, "msf.time", "⏱ Timp", (s.stopAfterMs > 0 ? "stop după " + (s.stopAfterMs / 1000) + " s" : "fără limită")
+        Section time = Section.nested(adv.body, "msf.time", "Timp", (s.stopAfterMs > 0 ? "stop după " + (s.stopAfterMs / 1000) + " s" : "fără limită")
                 + (s.jitterTimePct > 0 ? " · abatere " + s.jitterTimePct + "%" : ""));
         stopAfter = Ui.numberRow(time.body, "Oprește după (secunde, 0 = niciodată)", s.stopAfterMs / 1000, false);
         jitterPct = Ui.numberRow(time.body, "Abatere timp (%)", s.jitterTimePct, false);
 
-        Section appS = Section.nested(adv.body, "msf.app", "📱 Aplicație", (s.launchPackage.isEmpty() ? "nu deschide nimic" : "deschide " + s.launchPackage)
+        Section appS = Section.nested(adv.body, "msf.app", "Aplicație", (s.launchPackage.isEmpty() ? "nu deschide nimic" : "deschide " + s.launchPackage)
                 + (s.lockToPackage.isEmpty() ? "" : " · doar în " + s.lockToPackage));
         launchPkg = Ui.textRow(appS.body, "Deschide întâi aplicația (pachet; gol = nu)", s.launchPackage);
         appS.body.addView(Ui.button(c, "Alege aplicația de deschis…", new View.OnClickListener() {
@@ -74,11 +74,11 @@ final class MacroSettingsForm {
         }));
         appS.body.addView(Ui.muted(c, "Dacă iese din aplicația aleasă, redarea intră pe pauză."));
 
-        Section safeS = Section.nested(adv.body, "msf.safe", "🛡 Siguranță", s.safeMode ? "mod sigur pornit" : "mod sigur oprit");
+        Section safeS = Section.nested(adv.body, "msf.safe", "Siguranță", s.safeMode ? "mod sigur pornit" : "mod sigur oprit");
         safe = Ui.switchRow(safeS.body, "Mod sigur (ascunde panoul și țintele când atinge)", s.safeMode, null);
         safeS.body.addView(Ui.muted(c, "Pentru aplicațiile cu protecție anti-tapjacking care ignoră atingerile când ceva e desenat peste ele."));
 
-        Section vid = Section.nested(adv.body, "msf.video", "🎥 Filmare", s.recordVideo ? "filmează fiecare rulare" : "nu filmează");
+        Section vid = Section.nested(adv.body, "msf.video", "Filmare", s.recordVideo ? "filmează fiecare rulare" : "nu filmează");
         video = Ui.switchRow(vid.body, "Filmează ecranul cât rulează macro-ul", s.recordVideo, null);
     }
 

@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Edits one Action. Used by the list editor and by the on-screen markers.
  *
- * Only what matters for that kind of step is visible; everything else sits in "⚙ Avansat",
+ * Only what matters for that kind of step is visible; everything else sits in "Avansat",
  * itself split into one drop-down per area (📍 Locație, ⏱ Timp, 🔁 Repetare, 📝 Altele...),
  * each with a one-line summary so it rarely needs opening.
  */
@@ -207,7 +207,7 @@ final class ActionEditForm {
                     if (owner != null && MacroGraph.wouldCreateCycle(owner, m.id, lib)) continue;
                     if (m.id.equals(a.macroId)) sel = names.size();
                     macroIds.add(m.id);
-                    names.add(Macro.KIND_SCRIPT.equals(m.kind) ? "📜 " + m.name + " (cod)" : m.name); // a script runs as one step
+                    names.add(Macro.KIND_SCRIPT.equals(m.kind) ? "Script · " + m.name + " (cod)" : m.name); // a script runs as one step
                 }
                 if (names.isEmpty()) names.add("(nu există alte macro-uri)");
                 macro = spinner(c, f, "Macro de rulat (sunt ascunse cele care ar crea o buclă)", names.toArray(new String[0]), sel);
@@ -226,18 +226,18 @@ final class ActionEditForm {
         }
 
         // ---------------------------------------------------------------- ⚙ Avansat, one group per area
-        Section adv = Section.add(f, "form.adv", "⚙ Avansat", "");
+        Section adv = Section.add(f, "form.adv", "Avansat", "");
         LinearLayout A = adv.body;
         List<String> areas = new ArrayList<String>();
         switch (a.type) {
             case TAP:
             case LONG_PRESS:
             case DOUBLE_TAP: {
-                Section s = Section.nested(A, "form.pos", "📍 Locație", "(" + Math.round(a.x) + ", " + Math.round(a.y) + ")");
+                Section s = Section.nested(A, "form.pos", "Locație", "(" + Math.round(a.x) + ", " + Math.round(a.y) + ")");
                 x = Ui.numberRow(s.body, "X (px)", Math.round(a.x), false);
                 y = Ui.numberRow(s.body, "Y (px)", Math.round(a.y), false);
                 areas.add("Locație");
-                Section t = Section.nested(A, "form.time", "⏱ Timp", "apăsare " + ActionFormatter.ms(a.duration) + delaySummary(a));
+                Section t = Section.nested(A, "form.time", "Timp", "apăsare " + ActionFormatter.ms(a.duration) + delaySummary(a));
                 duration = Ui.numberRow(t.body, "Durata apăsării (ms)", a.duration, false);
                 delayRow(t.body, a);
                 areas.add("Timp");
@@ -254,25 +254,25 @@ final class ActionEditForm {
                 break;
             }
             case SWIPE: {
-                Section s = Section.nested(A, "form.pos", "📍 Locație", "(" + Math.round(a.x) + ", " + Math.round(a.y) + ") → ("
+                Section s = Section.nested(A, "form.pos", "Locație", "(" + Math.round(a.x) + ", " + Math.round(a.y) + ") → ("
                         + Math.round(a.x2) + ", " + Math.round(a.y2) + ")");
                 x = Ui.numberRow(s.body, "Start X", Math.round(a.x), false);
                 y = Ui.numberRow(s.body, "Start Y", Math.round(a.y), false);
                 x2 = Ui.numberRow(s.body, "Final X", Math.round(a.x2), false);
                 y2 = Ui.numberRow(s.body, "Final Y", Math.round(a.y2), false);
                 areas.add("Locație");
-                Section t = Section.nested(A, "form.time", "⏱ Timp", "swipe " + ActionFormatter.ms(a.duration) + delaySummary(a));
+                Section t = Section.nested(A, "form.time", "Timp", "swipe " + ActionFormatter.ms(a.duration) + delaySummary(a));
                 duration = Ui.numberRow(t.body, "Durata swipe-ului (ms)", a.duration, false);
                 delayRow(t.body, a);
                 areas.add("Timp");
                 break;
             }
             case WAIT_COLOR: {
-                Section s = Section.nested(A, "form.pos", "📍 Locație", "(" + Math.round(a.x) + ", " + Math.round(a.y) + ")");
+                Section s = Section.nested(A, "form.pos", "Locație", "(" + Math.round(a.x) + ", " + Math.round(a.y) + ")");
                 x = Ui.numberRow(s.body, "X (px)", Math.round(a.x), false);
                 y = Ui.numberRow(s.body, "Y (px)", Math.round(a.y), false);
                 areas.add("Locație");
-                Section t = Section.nested(A, "form.time", "⏱ Timp", (a.duration > 0 ? "max " + ActionFormatter.ms(a.duration) : "oricât")
+                Section t = Section.nested(A, "form.time", "Timp", (a.duration > 0 ? "max " + ActionFormatter.ms(a.duration) : "oricât")
                         + (a.stopOnTimeout ? ", apoi stop" : "") + delaySummary(a));
                 duration = Ui.numberRow(t.body, "Timp maxim de așteptare (ms, 0 = oricât)", a.duration, false);
                 stopOnTimeout = new CheckBox(c);
@@ -288,12 +288,12 @@ final class ActionEditForm {
                 break;
             case READ: {
                 if (a.readMode == Action.READ_COLOR) {
-                    Section s = Section.nested(A, "form.pos", "📍 Locație", "(" + Math.round(a.x) + ", " + Math.round(a.y) + ")");
+                    Section s = Section.nested(A, "form.pos", "Locație", "(" + Math.round(a.x) + ", " + Math.round(a.y) + ")");
                     x = Ui.numberRow(s.body, "X (px)", Math.round(a.x), false);
                     y = Ui.numberRow(s.body, "Y (px)", Math.round(a.y), false);
                     areas.add("Locație");
                 } else {
-                    Section s = Section.nested(A, "form.zone", "📍 Zona", "(" + Math.round(a.x) + ", " + Math.round(a.y) + ") – ("
+                    Section s = Section.nested(A, "form.zone", "Zonă", "(" + Math.round(a.x) + ", " + Math.round(a.y) + ") – ("
                             + Math.round(a.x2) + ", " + Math.round(a.y2) + ")");
                     x = Ui.numberRow(s.body, "Stânga (px)", Math.round(a.x), false);
                     y = Ui.numberRow(s.body, "Sus (px)", Math.round(a.y), false);
@@ -301,33 +301,33 @@ final class ActionEditForm {
                     y2 = Ui.numberRow(s.body, "Jos (px)", Math.round(a.y2), false);
                     areas.add("Zona");
                 }
-                Section t = Section.nested(A, "form.time", "⏱ Timp", delaySummary(a).replaceFirst("^ · ", ""));
+                Section t = Section.nested(A, "form.time", "Timp", delaySummary(a).replaceFirst("^ · ", ""));
                 delayRow(t.body, a);
                 areas.add("Timp");
                 break;
             }
             case LAUNCH_APP: {
-                Section t = Section.nested(A, "form.time", "⏱ Timp", (a.duration > 0 ? "așteaptă max " + ActionFormatter.ms(a.duration) : "nu așteaptă") + delaySummary(a));
+                Section t = Section.nested(A, "form.time", "Timp", (a.duration > 0 ? "așteaptă max " + ActionFormatter.ms(a.duration) : "nu așteaptă") + delaySummary(a));
                 duration = Ui.numberRow(t.body, "Așteaptă să apară max (ms, 0 = nu aștepta)", a.duration, false);
                 delayRow(t.body, a);
                 areas.add("Timp");
                 break;
             }
             default: {
-                Section t = Section.nested(A, "form.time", "⏱ Timp", delaySummary(a).replaceFirst("^ · ", ""));
+                Section t = Section.nested(A, "form.time", "Timp", delaySummary(a).replaceFirst("^ · ", ""));
                 delayRow(t.body, a);
                 areas.add("Timp");
             }
         }
         if (a.type != Action.Type.MACRO) {
-            Section r = Section.nested(A, "form.repeat", "🔁 Repetare",
+            Section r = Section.nested(A, "form.repeat", "Repetare",
                     a.repeat > 1 ? "×" + a.repeat + ", pauză " + ActionFormatter.ms(a.interval) : "o dată");
             repeat = Ui.numberRow(r.body, "Repetări", a.repeat, false);
             interval = Ui.numberRow(r.body, "Pauză între repetări (ms)", a.interval, false);
             if (a.type == Action.Type.IMAGE) imgHits = Ui.numberRow(r.body, "Oprește macro-ul după atâtea găsiri (0 = niciodată)", a.maxHits, false);
             areas.add("Repetare");
         }
-        Section o = Section.nested(A, "form.other", "📝 Altele", (a.enabled ? "activă" : "dezactivată")
+        Section o = Section.nested(A, "form.other", "Altele", (a.enabled ? "activă" : "dezactivată")
                 + (a.label != null && a.label.length() > 0 ? " · " + a.label : ""));
         enabled = new CheckBox(c);
         enabled.setText("Activă");
@@ -376,14 +376,14 @@ final class ActionEditForm {
         colorText = Ui.text(c, "", 15, Ui.TEXT, true);
         colorText.setPadding(Ui.dp(c, 12), 0, 0, 0);
         row.addView(colorText, Ui.weight(1));
-        row.addView(Ui.text(c, "✏", 18, Ui.ACCENT, true));
+        row.addView(Ui.text(c, "Edit", 13, Ui.ACCENT, true));
         Ui.clickable(row, new View.OnClickListener() {
             @Override public void onClick(View v) { openColorDialog(); }
         }, Ui.dp(c, 10));
         f.addView(row, Ui.matchWrap());
         showColor();
         if (tools != null) {
-            f.addView(Ui.button(c, "🎯 Alege punctul și culoarea de pe ecran", new View.OnClickListener() {
+            f.addView(Ui.button(c, "Alege punctul și culoarea de pe ecran", new View.OnClickListener() {
                 @Override public void onClick(View v) { apply(); tools.pickColor(a); }
             }));
         }
@@ -447,14 +447,14 @@ final class ActionEditForm {
         LinearLayout btns = Ui.horizontal(c);
         if (tools != null) {
             if (a.readMode == Action.READ_COLOR) {
-                btns.addView(Ui.button(c, "🎯 Alege punctul", new View.OnClickListener() {
+                btns.addView(Ui.button(c, "Alege punctul", new View.OnClickListener() {
                     @Override public void onClick(View v) { apply(); tools.pickColor(a); }
                 }));
             } else {
                 btns.addView(Ui.button(c, "▭ Alege zona", new View.OnClickListener() {
                     @Override public void onClick(View v) { apply(); tools.pickZone(a); }
                 }));
-                btns.addView(Ui.button(c, "🔍 Testează citirea", new View.OnClickListener() {
+                btns.addView(Ui.button(c, "Testează citirea", new View.OnClickListener() {
                     @Override public void onClick(View v) { apply(); tools.testRead(a); }
                 }));
             }
@@ -483,7 +483,7 @@ final class ActionEditForm {
             public void afterTextChanged(Editable ed) {
                 String t = ed.toString();
                 String err = template ? Expr.checkTemplate(t) : (t.trim().isEmpty() ? "Scrie o valoare sau un calcul" : Expr.check(t));
-                out.setText(err == null ? "✅ corect" : "⚠ " + err);
+                out.setText(err == null ? "Corect" : "Atenție: " + err);
                 out.setTextColor(err == null ? Ui.ACCENT : Ui.DANGER);
             }
         };
@@ -515,16 +515,16 @@ final class ActionEditForm {
         top.addView(thumb);
         LinearLayout btns = Ui.vertical(c);
         if (tools != null) {
-            btns.addView(Ui.button(c, "🔍 Testează acum", new View.OnClickListener() {
+            btns.addView(Ui.button(c, "Testează acum", new View.OnClickListener() {
                 @Override public void onClick(View v) { apply(); tools.testImage(a); }
             }));
-            btns.addView(Ui.button(c, "✂ Recapturează", new View.OnClickListener() {
+            btns.addView(Ui.button(c, "Recapturează", new View.OnClickListener() {
                 @Override public void onClick(View v) { apply(); tools.recaptureImage(a); }
             }));
         }
         top.addView(btns, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
         f.addView(top);
-        if (bm == null) f.addView(Ui.muted(c, "⚠ Poza acestui pas lipsește (de ex. fișier importat fără ea). Recapturează imaginea."));
+        if (bm == null) f.addView(Ui.muted(c, "Imaginea acestui pas lipsește (de ex. fișier importat fără ea). Recapturează imaginea."));
         imgDoes = spinner(c, f, "Când e pe ecran", DOES, a.press);
         int missing = a.waitMode == Action.MISSING_CONTINUE ? 0 : a.stopOnTimeout ? 2 : 1;
         imgMissing = spinner(c, f, "Dacă nu e pe ecran", MISSING, missing);
@@ -535,7 +535,7 @@ final class ActionEditForm {
         com.freeclick.core.ImageSpec sp = a.img;
         int pk = 3;
         for (int i = 0; i < PRECISION_VALUES.length; i++) if (PRECISION_VALUES[i] == sp.precision) pk = i;
-        Section s = Section.nested(A, "form.precision", "🎯 Precizie și zonă", PRECISION[pk].replaceFirst(" \\(.*", "") + " · "
+        Section s = Section.nested(A, "form.precision", "Precizie și zonă", PRECISION[pk].replaceFirst(" \\(.*", "") + " · "
                 + WHERE[whereOf(sp)].toLowerCase(java.util.Locale.ROOT) + (a.allMatches ? " · toate" : ""));
         imgPrecisionKind = spinner(c, s.body, "Precizie", PRECISION, pk);
         final LinearLayout advRow = Ui.vertical(c);
@@ -549,7 +549,7 @@ final class ActionEditForm {
         imgWhere = spinner(c, s.body, "Unde caută", WHERE, whereOf(sp));
         imgMany = spinner(c, s.body, "Dacă apare de mai multe ori", MANY, a.allMatches ? 1 : 0);
         areas.add("Precizie");
-        Section t = Section.nested(A, "form.time", "⏱ Timp", (a.duration > 0 ? "max " + ActionFormatter.ms(a.duration) : "oricât")
+        Section t = Section.nested(A, "form.time", "Timp", (a.duration > 0 ? "max " + ActionFormatter.ms(a.duration) : "oricât")
                 + " · apăsare " + ActionFormatter.ms(a.pressMs) + delaySummary(a));
         duration = Ui.numberRow(t.body, "Cât aștepți cel mult (ms, 0 = oricât)", a.duration, false);
         imgPress = Ui.numberRow(t.body, "Durata apăsării (ms)", a.pressMs, false);

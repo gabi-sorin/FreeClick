@@ -58,7 +58,7 @@ public final class DocsActivity extends Activity {
         Ui.styleWindow(this);
         fromEditor = getIntent().getBooleanExtra(EXTRA_FROM_EDITOR, false);
         LinearLayout root = Ui.vertical(this);
-        LinearLayout header = Ui.header(this, "📖 Documentație", false, false, new View.OnClickListener() {
+        LinearLayout header = Ui.header(this, "Documentație", false, false, new View.OnClickListener() {
             @Override public void onClick(View v) { back(); }
         }, null);
         title = (TextView) header.getChildAt(1);
@@ -118,10 +118,10 @@ public final class DocsActivity extends Activity {
     @Override public void onBackPressed() { back(); }
 
     // ------------------------------------------------------------------ the chapters
-    private static final String[] CHAPTER_ICONS = {"🚀", "👆", "⏳", "🖼", "✋", "📋", "💬", "🔢", "🧠", "⚙"};
+    private static final String[] CHAPTER_ICONS = {"GO", "◎", "◷", "IMG", "↗", "≡", "TXT", "123", "AI", "SET"};
 
     private void showChapters() {
-        title.setText("📖 Documentație");
+        title.setText("Documentație");
         content.addView(Ui.muted(this, "Fiecare funcție și setare are o pagină. Caută sus (merge orice nume: tap, click, wait_for_touch…) "
                 + "sau alege un capitol."));
         List<String> cats = Docs.categories();
@@ -225,7 +225,7 @@ public final class DocsActivity extends Activity {
             hs.setBackground(Ui.surface(this, Ui.BG, 12));
             content.addView(hs, Ui.matchWrap());
             LinearLayout actions = Ui.horizontal(this);
-            actions.addView(Ui.button(this, "📋 Copiază", new View.OnClickListener() {
+            actions.addView(Ui.button(this, "Copiază", new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                     if (cm != null) cm.setPrimaryClip(ClipData.newPlainText("FreeClick", e.example));

@@ -43,7 +43,7 @@ public final class LabActivity extends Activity {
         super.onCreate(b);
         Ui.styleWindow(this);
         LinearLayout root = Ui.vertical(this);
-        root.addView(Ui.header(this, "🧪 Laborator", false, false, new View.OnClickListener() {
+        root.addView(Ui.header(this, "Laborator", false, false, new View.OnClickListener() {
             @Override public void onClick(View v) { finish(); }
         }, null));
         LinearLayout body = Ui.vertical(this);
@@ -54,7 +54,7 @@ public final class LabActivity extends Activity {
         row.addView(Ui.colored(this, "Pornește", Ui.ACCENT, new View.OnClickListener() {
             @Override public void onClick(View v) { start(); }
         }));
-        row.addView(Ui.button(this, "📋 Copiază rezultatele", new View.OnClickListener() {
+        row.addView(Ui.button(this, "Copiază rezultatele", new View.OnClickListener() {
             @Override public void onClick(View v) {
                 ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 if (cm != null) cm.setPrimaryClip(ClipData.newPlainText("FreeClick Laborator", report.toString()));
@@ -294,7 +294,7 @@ public final class LabActivity extends Activity {
     }
 
     private void line(String name, String value, boolean good) {
-        TextView v = Ui.text(this, (good ? "✅ " : "⚠ ") + name + ": " + value, 14, good ? Ui.TEXT : 0xFFF5C26B, false);
+        TextView v = Ui.text(this, (good ? "OK · " : "Atenție · ") + name + ": " + value, 14, good ? Ui.TEXT : 0xFFF5C26B, false);
         v.setPadding(0, Ui.dp(this, 4), 0, Ui.dp(this, 4));
         results.addView(v);
         report.append(good ? "OK  " : "!!  ").append(name).append(": ").append(value).append('\n');

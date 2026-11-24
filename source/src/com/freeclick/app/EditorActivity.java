@@ -38,7 +38,7 @@ import java.util.TreeSet;
  * Opens either a saved item (EXTRA_ID) or the panel's current work (EXTRA_WORKSPACE).
  * For combinations, "+" adds saved recordings / presets.
  *
- * 1.6: every change can be undone (↶ ↷); 👁 previews the steps over the app below without
+ * 1.6: every change can be undone (↶ ↷); previews the steps over the app below without
  * touching anything; "Unelte" shortens pauses; long-press a row to select several steps
  * (faster ×2, disable, duplicate, delete); a row's ⋮ can run the macro from that step.
  */
@@ -173,7 +173,7 @@ public final class EditorActivity extends Activity {
                 if (tabTime != null) l.add(new TutorialOverlay.Step(tabTime, "Cronologie: pașii pe o bandă de timp. Tragi un bloc ca să-l "
                         + "muți în timp; un ecran mic arată unde atinge pasul ales."));
                 l.add(new TutorialOverlay.Step(addBtn, "+ Adaugă: atingere, swipe, zoom, pauză, imagine, culoare, citire din ecran, "
-                        + "alt macro sau un 📜 script…"));
+                        + "alt macro sau un script…"));
                 l.add(new TutorialOverlay.Step(saveBtn, "Salvează păstrează schimbările. Înapoi fără salvare te întreabă înainte."));
                 TutorialOverlay.show(EditorActivity.this, l.toArray(new TutorialOverlay.Step[0]), new TutorialOverlay.OnClosed() {
                     @Override public void onClosed(boolean neverAgain) { if (neverAgain) App.get().prefs().setSectionOpen("tutorial.editor.v1", true); }
@@ -356,8 +356,8 @@ public final class EditorActivity extends Activity {
             toolbar.addView(Ui.text(this, selected.size() + " selectate", 14, Ui.TEXT, true), Ui.weight(1));
             toolbar.addView(tool("×2", "Mai rapid ×2", true, new View.OnClickListener() { public void onClick(View v) { speedUpSelected(); } }));
             toolbar.addView(tool("⏸", "Activează / dezactivează", true, new View.OnClickListener() { public void onClick(View v) { toggleSelected(); } }));
-            toolbar.addView(tool("📋", "Duplică", true, new View.OnClickListener() { public void onClick(View v) { duplicateSelected(); } }));
-            toolbar.addView(tool("🗑", "Șterge", true, new View.OnClickListener() { public void onClick(View v) { deleteSelected(); } }));
+            toolbar.addView(tool("⧉", "Duplică", true, new View.OnClickListener() { public void onClick(View v) { duplicateSelected(); } }));
+            toolbar.addView(tool("×", "Șterge", true, new View.OnClickListener() { public void onClick(View v) { deleteSelected(); } }));
             toolbar.addView(tool("×", "Gata cu selecția", true, new View.OnClickListener() { public void onClick(View v) { selected.clear(); refresh(); } }));
             return;
         }
@@ -367,7 +367,7 @@ public final class EditorActivity extends Activity {
                 new View.OnClickListener() { public void onClick(View v) { redo(); } }));
         View spacer = new View(this);
         toolbar.addView(spacer, Ui.weight(1));
-        TextView preview = Ui.text(this, "👁 Previzualizează", 14, Ui.ACCENT, true);
+        TextView preview = Ui.text(this, "◉ Previzualizează", 14, Ui.ACCENT, true);
         preview.setPadding(Ui.dp(this, 10), Ui.dp(this, 8), Ui.dp(this, 10), Ui.dp(this, 8));
         Ui.clickable(preview, new View.OnClickListener() { public void onClick(View v) { preview(); } }, Ui.dp(this, 8));
         toolbar.addView(preview);
@@ -622,10 +622,10 @@ public final class EditorActivity extends Activity {
         insertAt = at;
         final boolean combo = Macro.KIND_COMBO.equals(macro.kind);
         final String[] kinds = combo
-                ? new String[]{"Înregistrare, presetare sau 📜 script salvat", "Pauză", "Pauză aleatoare", "Acțiune de sistem", "Deschide o aplicație",
+                ? new String[]{"Înregistrare, presetare sau script salvat", "Pauză", "Pauză aleatoare", "Acțiune de sistem", "Deschide o aplicație",
                 "Afișează în consolă", "Setează o variabilă (calcule)"}
                 : new String[]{"Atingere", "Apăsare lungă", "Dublu tap", "Swipe", "Pauză", "Pauză aleatoare", "Acțiune de sistem",
-                "Deschide o aplicație", "Alt macro sau 📜 script (cod)", "Așteaptă o culoare (alegi de pe ecran)", "Imagine (decupează de pe ecran)",
+                "Deschide o aplicație", "Alt macro sau script (cod)", "Așteaptă o culoare (alegi de pe ecran)", "Imagine (decupează de pe ecran)",
                 "Citește număr / text din zonă", "Citește culoarea unui punct", "Afișează în consolă", "Setează o variabilă (calcule)",
                 "Zoom în (două degete)", "Zoom out (două degete)"};
         new AlertDialog.Builder(this).setTitle(at >= 0 ? "Adaugă după pasul " + at : "Adaugă").setItems(kinds, new DialogInterface.OnClickListener() {
@@ -726,7 +726,7 @@ public final class EditorActivity extends Activity {
         String[] names = new String[options.size()];
         for (int i = 0; i < names.length; i++) {
             Macro o = options.get(i);
-            names[i] = (Macro.KIND_SCRIPT.equals(o.kind) ? "📜 " : "") + o.name + "  (" + LibraryActivity.kindName(o.kind) + ")";
+            names[i] = (Macro.KIND_SCRIPT.equals(o.kind) ? "Script · " : "") + o.name + "  (" + LibraryActivity.kindName(o.kind) + ")";
         }
         new AlertDialog.Builder(this).setTitle("Alege").setItems(names, new DialogInterface.OnClickListener() {
             @Override public void onClick(DialogInterface d, int which) { append(Action.macro(options.get(which).id, 1), 0); }
@@ -758,7 +758,7 @@ public final class EditorActivity extends Activity {
             rowBg.setStroke(Ui.dp(EditorActivity.this, isSel ? 2 : 1), isSel ? Ui.ACCENT : 0xFF252F3D);
             row.setBackground(rowBg);
             Action a = macro.actions.get(i);
-            String desc = (isSel ? "✅ " : "") + (i + 1) + ". " + ActionFormatter.describe(a, lib());
+            String desc = (isSel ? "✓ " : "") + (i + 1) + ". " + ActionFormatter.describe(a, lib());
             if (a.label != null && !a.label.isEmpty()) desc += "\n   " + a.label;
             TextView t = Ui.text(EditorActivity.this, desc, 14, a.enabled ? Ui.TEXT : Ui.MUTED, false);
             Ui.clickable(t, new View.OnClickListener() {

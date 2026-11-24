@@ -48,7 +48,7 @@ import java.util.regex.Pattern;
 /**
  * "Cod": write a script (C++-like), with line numbers, colours, mistakes shown as you type,
  * buttons that write code from what you choose on the screen, breakpoints (tap a line number),
- * ▶ run, 👣 step by step, examples, the list of functions and a "tap to continue" tutorial.
+ * ▶ run, Pas cu pas step by step, examples, the list of functions and a "tap to continue" tutorial.
  */
 public final class CodeEditorActivity extends Activity {
     public static final String EXTRA_ID = "id";
@@ -60,7 +60,7 @@ public final class CodeEditorActivity extends Activity {
     /** The script open last (coming back from choosing on the screen brings no id). */
     private static String lastId;
 
-    /** For the panel's "📷 Captură pentru cod". */
+    /** For the panel's "Captură pentru cod". */
     static String lastScriptId() { return lastId; }
 
     private static final int REQ_GALLERY = 41;
@@ -82,6 +82,7 @@ public final class CodeEditorActivity extends Activity {
 
     // ---- 2.0: the picture pane (screenshot of the game next to the code)
     private LinearLayout root, shotPane, shotChips, toolsRow, simBar;
+    private HorizontalScrollView toolsScroll;
     private View divider;
     private ShotView shotView;
     private TextView paneBtn, marksAll, marksMore, simInfo;
@@ -200,7 +201,7 @@ public final class CodeEditorActivity extends Activity {
         title = (TextView) header.getChildAt(1);
         Ui.clickable(title, new View.OnClickListener() { public void onClick(View v) { rename(); } }, Ui.dp(this, 8));
         moreBtn = (TextView) header.getChildAt(header.getChildCount() - 1);
-        paneBtn = Ui.text(this, "🖼", 20, Ui.TEXT, false);
+        paneBtn = Ui.text(this, "IMG", 13, Ui.TEXT, false);
         paneBtn.setGravity(Gravity.CENTER);
         Ui.clickable(paneBtn, new View.OnClickListener() { public void onClick(View v) { togglePane(); } }, Ui.dp(this, 24));
         header.addView(paneBtn, header.getChildCount() - 1, new LinearLayout.LayoutParams(Ui.dp(this, 44), Ui.dp(this, 48)));
@@ -210,6 +211,9 @@ public final class CodeEditorActivity extends Activity {
         status = Ui.text(this, "", 13, Ui.MUTED, false);
         int p = Ui.dp(this, 12);
         status.setPadding(p, Ui.dp(this, 6), p, Ui.dp(this, 6));
+        status.setTextSize(12);
+        status.setMaxLines(1);
+        status.setEllipsize(android.text.TextUtils.TruncateAt.END);
         status.setBackground(Ui.rounded(Ui.SURFACE, Ui.dp(this, 10)));
         Ui.clickable(status, new View.OnClickListener() {
             @Override public void onClick(View v) { goToLine(runtimeErrorLine > 0 ? runtimeErrorLine : errorLine); }
@@ -222,12 +226,12 @@ public final class CodeEditorActivity extends Activity {
         hs.setHorizontalScrollBarEnabled(false);
         insertBar = Ui.horizontal(this);
         insertBar.setPadding(Ui.dp(this, 6), Ui.dp(this, 4), Ui.dp(this, 6), Ui.dp(this, 4));
-        chip("📖", new View.OnClickListener() { public void onClick(View v) {
+        chip("DOC", new View.OnClickListener() { public void onClick(View v) {
             String w = wordAtCursor();
             docs(w != null && com.freeclick.core.script.Docs.find(w) != null ? w : null);
         } });
         // one "+" instead of six: what to pick on the real screen (or a step from the list) opens from it
-        chip("+ 📱 Din ecran ▾", new View.OnClickListener() { public void onClick(final View v) {
+        chip("+ Din ecran ▾", new View.OnClickListener() { public void onClick(final View v) {
             Ui.popup(v, java.util.Arrays.asList("Atingere", "Swipe", "Așteaptă o culoare", "Zonă", "Imagine", "Pas din listă…"), null, new Ui.OnPick() {
                 @Override public void onPick(int i) {
                     if (i == 5) { insertStep(); return; }
@@ -254,7 +258,7 @@ public final class CodeEditorActivity extends Activity {
         LinearLayout row = Ui.horizontal(this);
         gutter = new TextView(this);
         gutter.setTypeface(Typeface.MONOSPACE);
-        gutter.setTextSize(14);
+        gutter.setTextSize(16);
         gutter.setTextColor(Ui.LABEL);
         gutter.setGravity(Gravity.END);
         gutter.setPadding(Ui.dp(this, 4), Ui.dp(this, 8), Ui.dp(this, 6), Ui.dp(this, 8));
@@ -269,7 +273,7 @@ public final class CodeEditorActivity extends Activity {
         CodeEdit ce = new CodeEdit(this);
         edit = ce;
         edit.setTypeface(Typeface.MONOSPACE);
-        edit.setTextSize(14);
+        edit.setTextSize(16);
         edit.setTextColor(Ui.TEXT);
         edit.setGravity(Gravity.TOP | Gravity.START);
         edit.setHorizontallyScrolling(true);
@@ -327,7 +331,7 @@ public final class CodeEditorActivity extends Activity {
         hintBar.setBackgroundColor(Ui.SURFACE_HIGH);
         hintBar.setMaxLines(3);
         hintBar.setVisibility(View.GONE);
-        hintBar.setOnClickListener(new View.OnClickListener() { public void onClick(View v) { // 📖 the page of the function being written
+        hintBar.setOnClickListener(new View.OnClickListener() { public void onClick(View v) { // the page of the function being written
             String t = hintBar.getText().toString();
             int paren = t.indexOf('(');
             int sp = paren > 0 ? t.lastIndexOf(' ', paren) : -1;
@@ -341,9 +345,9 @@ public final class CodeEditorActivity extends Activity {
         bottom.setPadding(p, Ui.dp(this, 6), p, Ui.dp(this, 10));
         runBtn = Ui.colored(this, "▶ Rulează", Ui.ACCENT, new View.OnClickListener() { public void onClick(View v) { run(false); } });
         bottom.addView(runBtn, Ui.weight(1));
-        stepBtn = Ui.button(this, "👣 Pas cu pas", new View.OnClickListener() { public void onClick(View v) { run(true); } });
+        stepBtn = Ui.button(this, "Pas cu pas", new View.OnClickListener() { public void onClick(View v) { run(true); } });
         bottom.addView(stepBtn, Ui.weight(1));
-        bottom.addView(Ui.button(this, "💾", new View.OnClickListener() { public void onClick(View v) { save(true); } }));
+        bottom.addView(Ui.button(this, "Salvează", new View.OnClickListener() { public void onClick(View v) { save(true); } }));
         root.addView(bottom, Ui.matchWrap());
         setContentView(root);
         updateGutter();
@@ -487,7 +491,7 @@ public final class CodeEditorActivity extends Activity {
         Set<Integer> bp = breakpoints();
         if (!bp.remove(line)) bp.add(line);
         updateGutter();
-        Toast.makeText(this, bp.contains(line) ? "● Oprire la linia " + line + " (▶ sau 👣 se opresc aici)" : "Oprirea de la linia " + line + " a fost scoasă",
+        Toast.makeText(this, bp.contains(line) ? "● Oprire la linia " + line + " (▶ sau Pas cu pas se opresc aici)" : "Oprirea de la linia " + line + " a fost scoasă",
                 Toast.LENGTH_SHORT).show();
     }
 
@@ -505,14 +509,14 @@ public final class CodeEditorActivity extends Activity {
         ScriptError err = ScriptRunner.check(src);
         errorLine = err == null ? -1 : err.line;
         if (runtimeError != null) {
-            status.setText("❌ " + runtimeError + "  (atinge ca să mergi la linie)");
+            status.setText("Eroare: " + runtimeError + "  (atinge ca să mergi la linie)");
             status.setTextColor(0xFFFFA4B4);
         } else if (err == null) {
             int lines = src.isEmpty() ? 0 : src.split("\n", -1).length;
-            status.setText("✅ Fără greșeli · " + lines + (lines == 1 ? " linie" : " linii") + " · " + macro.actions.size() + " pași în listă"); // tree-ok: pasi indexes the top-level list
+            status.setText("Fără greșeli · " + lines + (lines == 1 ? " linie" : " linii") + " · " + macro.actions.size() + " pași în listă"); // tree-ok: pasi indexes the top-level list
             status.setTextColor(Ui.ACCENT);
         } else {
-            status.setText("⚠ " + err.describe() + "  (atinge ca să mergi la linie)");
+            status.setText("Atenție: " + err.describe() + "  (atinge ca să mergi la linie)");
             status.setTextColor(0xFFFFC66D);
         }
         colour(src, err == null ? runtimeErrorLine : err.line);
@@ -728,7 +732,7 @@ public final class CodeEditorActivity extends Activity {
     // ------------------------------------------------------------------ menu
     private void more(View anchor) {
         // the 3 used most, the rest under "Avansat ›" (like the panel's ≡)
-        java.util.List<String> labels = java.util.Arrays.asList("📖 Documentație", "Exemple", "📤 Partajează scriptul", "Avansat  ›");
+        java.util.List<String> labels = java.util.Arrays.asList("Documentație", "Exemple", "Partajează scriptul", "Avansat  ›");
         Ui.popup(anchor, labels, null, new Ui.OnPick() {
             @Override public void onPick(int i) {
                 switch (i) {
@@ -767,7 +771,7 @@ public final class CodeEditorActivity extends Activity {
         });
     }
 
-    /** 📖 The documentation, open at a name (null = the start). */
+    /** The documentation, open at a name (null = the start). */
     private void docs(String name) {
         Intent i = new Intent(this, DocsActivity.class).putExtra(DocsActivity.EXTRA_FROM_EDITOR, true);
         if (name != null) i.putExtra(DocsActivity.EXTRA_NAME, name);
@@ -856,7 +860,7 @@ public final class CodeEditorActivity extends Activity {
         shotPane = Ui.vertical(this);
         shotPane.setBackgroundColor(Ui.BG);
 
-        // row 1: the screenshots (chips) + the marks box (👁 all · ▾ which)
+        // row 1: the screenshots (chips) + the marks box (all · ▾ which)
         LinearLayout top = Ui.horizontal(this);
         top.setGravity(Gravity.CENTER_VERTICAL);
         top.setPadding(Ui.dp(this, 6), Ui.dp(this, 4), Ui.dp(this, 6), Ui.dp(this, 2));
@@ -888,18 +892,18 @@ public final class CodeEditorActivity extends Activity {
         shotPane.addView(top, Ui.matchWrap());
 
         // row 2: tools that write code from the picture, and the simulation
-        HorizontalScrollView toolsScroll = new HorizontalScrollView(this);
+        toolsScroll = new HorizontalScrollView(this);
         toolsScroll.setHorizontalScrollBarEnabled(false);
         toolsRow = Ui.horizontal(this);
         toolsRow.setPadding(Ui.dp(this, 6), Ui.dp(this, 2), Ui.dp(this, 6), Ui.dp(this, 4));
-        toolChip("👆 Punct", ShotView.TOOL_POINT);
+        toolChip("Punct", ShotView.TOOL_POINT);
         toolChip("↗ Swipe", ShotView.TOOL_SWIPE);
         toolChip("▭ Zonă", ShotView.TOOL_ZONE);
-        toolChip("🎨 Culoare", ShotView.TOOL_COLOR);
+        toolChip("Culoare", ShotView.TOOL_COLOR);
         toolChip("✂ Imagine", ShotView.TOOL_IMAGE);
-        toolChip("🎲 Tap în zonă", ShotView.TOOL_TAPZONE);
-        toolChip("🔢 Model", ShotView.TOOL_MODEL);
-        modelDone = paneChip("✅ Scrie modelul", Ui.ACCENT);
+        toolChip("Tap în zonă", ShotView.TOOL_TAPZONE);
+        toolChip("Model", ShotView.TOOL_MODEL);
+        modelDone = paneChip("Scrie modelul", Ui.ACCENT);
         Ui.clickable(modelDone, new View.OnClickListener() { public void onClick(View v) { writeModel(); } }, Ui.dp(this, 14));
         modelDone.setVisibility(View.GONE);
         toolsRow.addView(modelDone, chipLp());
@@ -916,6 +920,7 @@ public final class CodeEditorActivity extends Activity {
             @Override public void onToolEnded() { highlightTool(ShotView.TOOL_NONE); }
         });
         shotPane.addView(shotView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, paneHeight()));
+        updateShotControls(shot != null);
 
         // simulation bar (after ▶ Simulează)
         simBar = Ui.horizontal(this);
@@ -1004,7 +1009,7 @@ public final class CodeEditorActivity extends Activity {
 
     private void chooseTool(int tool) {
         if (shotView.picture() == null) {
-            Toast.makeText(this, "Adaugă întâi o captură a jocului (📷 + Captură).", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Adaugă întâi o captură a jocului.", Toast.LENGTH_LONG).show();
             return;
         }
         int t = shotView.tool() == tool ? ShotView.TOOL_NONE : tool;
@@ -1017,7 +1022,7 @@ public final class CodeEditorActivity extends Activity {
                 : t == ShotView.TOOL_COLOR ? "Ține degetul pe culoare; lupa arată pixelul și codul culorii."
                 : t == ShotView.TOOL_IMAGE ? "Încadrează butonul de căutat (strâns, fără mult fundal)."
                 : t == ShotView.TOOL_TAPZONE ? "Trage un dreptunghi: scriptul atinge de fiecare dată alt loc din el."
-                : t == ShotView.TOOL_MODEL ? "Atinge 3–5 pixeli care se văd doar pe ecranul căutat, apoi „✅ Scrie modelul”." : null;
+                : t == ShotView.TOOL_MODEL ? "Atinge 3–5 pixeli care se văd doar pe ecranul căutat, apoi „Scrie modelul”." : null;
         if (hint != null) Toast.makeText(this, hint, Toast.LENGTH_SHORT).show();
     }
 
@@ -1035,6 +1040,13 @@ public final class CodeEditorActivity extends Activity {
         return Math.max(Ui.dp(this, 90), h);
     }
 
+    private void updateShotControls(boolean hasShot) {
+        if (toolsScroll == null) return;
+        toolsScroll.setVisibility(hasShot ? View.VISIBLE : View.GONE);
+        marksBox.setVisibility(hasShot ? View.VISIBLE : View.GONE);
+        if (!hasShot) shotView.setEmptyText("Adaugă o captură pentru acțiuni vizuale.");
+    }
+
     private void setPaneHeight(int h) {
         int max = root == null || root.getHeight() == 0 ? h : root.getHeight() - Ui.dp(this, 300);
         h = Math.max(Ui.dp(this, 90), Math.min(Math.max(Ui.dp(this, 90), max), h));
@@ -1047,7 +1059,7 @@ public final class CodeEditorActivity extends Activity {
         if (shotPane == null || shotPane.getVisibility() != View.VISIBLE || root.getHeight() == 0) return;
         if (shot == null) {
             ViewGroup.LayoutParams lp = shotView.getLayoutParams();
-            int h = Ui.dp(this, 64);
+            int h = Ui.dp(this, 48);
             if (lp.height != h) { lp.height = h; shotView.setLayoutParams(lp); }
             divider.setVisibility(View.GONE);
             return;
@@ -1065,12 +1077,12 @@ public final class CodeEditorActivity extends Activity {
         App.get().prefs().setCodeShotPane(show);
         if (show) fitPane();
         if (shot == null) divider.setVisibility(View.GONE);
-        Toast.makeText(this, show ? "Captura jocului e sus" : "Doar cod (🖼 o arată din nou)", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, show ? "Captura jocului e sus" : "Doar cod (arată captura din nou)", Toast.LENGTH_SHORT).show();
     }
 
     // ------------------------------------------------------------------ which marks are drawn
-    private static final String[] CAT_NAMES = {"👆 Atingeri (tap, point)", "↗ Swipe-uri", "▭ Zone de citit", "🎨 Culori",
-            "🖼 Imagini găsite pe captură", "📋 Pașii din listă (pasi)", "▶ Simularea"};
+    private static final String[] CAT_NAMES = {"Atingeri (tap, point)", "↗ Swipe-uri", "▭ Zone de citit", "Culori",
+            "Imagini găsite pe captură", "Pașii din listă (pasi)", "▶ Simularea"};
 
     private void applyMarksVisibility() {
         Prefs pr = App.get().prefs();
@@ -1078,12 +1090,12 @@ public final class CodeEditorActivity extends Activity {
         int mask = pr.codeMarksMask();
         int on = 0;
         for (int i = 0; i < CAT_NAMES.length; i++) if ((mask & (1 << i)) != 0) on++;
-        marksAll.setText(all ? (on == CAT_NAMES.length ? "👁 Marcaje" : "👁 " + on + "/" + CAT_NAMES.length) : "👁 Ascunse");
+        marksAll.setText(all ? (on == CAT_NAMES.length ? "Marcaje" : "Vizibile " + on + "/" + CAT_NAMES.length) : "Ascunse");
         marksAll.setTextColor(all ? Ui.ACCENT : Ui.MUTED);
         if (shotView != null) shotView.setMarksShown(all, mask);
     }
 
-    /** The ▾ next to 👁: one switch for everything, then one per kind. */
+    /** The ▾ next to Marcaje: one switch for everything, then one per kind. */
     private void marksPopup() {
         final Prefs pr = App.get().prefs();
         LinearLayout box = Ui.vertical(this);
@@ -1151,7 +1163,7 @@ public final class CodeEditorActivity extends Activity {
         shotChips.removeAllViews();
         for (final ShotStore.Shot s : shots) {
             boolean on = current != null && current.id.equals(s.id);
-            TextView t = paneChip("📷 " + s.name, on ? Ui.ON_ACCENT : Ui.TEXT);
+            TextView t = paneChip("Captură · " + s.name, on ? Ui.ON_ACCENT : Ui.TEXT);
             t.setBackground(Ui.rounded(on ? Ui.ACCENT : Ui.SURFACE_HIGH, Ui.dp(this, 14)));
             Ui.clickable(t, new View.OnClickListener() { public void onClick(View v) { rebuildChips(s); selectShot(s); } }, Ui.dp(this, 14));
             t.setOnLongClickListener(new View.OnLongClickListener() {
@@ -1169,9 +1181,10 @@ public final class CodeEditorActivity extends Activity {
         closeSim();
         shotTools = null;
         shot = s;
+        updateShotControls(s != null);
         if (s == null) {
             shotView.setPicture(null, 1, 1);
-            shotView.setEmptyText("Nicio captură a jocului încă.\nApasă „+ Captură” (din joc sau din galerie).");
+            shotView.setEmptyText("Adaugă o captură pentru acțiuni vizuale.");
             fitPane();
             return;
         }
@@ -1205,7 +1218,7 @@ public final class CodeEditorActivity extends Activity {
             Toast.makeText(this, "Maximum " + ShotStore.MAX_PER_SCRIPT + " capturi pe script. Ține apăsat pe una ca s-o ștergi.", Toast.LENGTH_LONG).show();
             return;
         }
-        String[] items = {"📷 Fă o captură din joc", "🖼 Alege din galerie (un screenshot)"};
+        String[] items = {"Fă o captură din joc", "Alege din galerie (un screenshot)"};
         new AlertDialog.Builder(this).setTitle("Captură nouă").setItems(items, new DialogInterface.OnClickListener() {
             @Override public void onClick(DialogInterface d, int which) {
                 if (which == 0) fromScreen(ClickService.EDITOR_SHOT);
@@ -1220,7 +1233,7 @@ public final class CodeEditorActivity extends Activity {
 
     @Override protected void onActivityResult(int req, int res, Intent data) {
         super.onActivityResult(req, res, data);
-        if (req == REQ_DOCS) { // 📖 "Pune în cod": the example goes in at the cursor
+        if (req == REQ_DOCS) { // "Pune în cod": the example goes in at the cursor
             String code = res == RESULT_OK && data != null ? data.getStringExtra(DocsActivity.EXTRA_INSERT) : null;
             if (code != null) { insert(code.endsWith("\n") ? code : code + "\n", code.length()); recheck(); }
             return;
@@ -1266,7 +1279,7 @@ public final class CodeEditorActivity extends Activity {
                 App.get().prefs().setCodeShot(macro.id, a.id);
                 if (shotPane.getVisibility() != View.VISIBLE) togglePane();
                 loadShots();
-                Toast.makeText(CodeEditorActivity.this, "📷 " + a.name + " · ține apăsat pe ea ca s-o redenumești (ex. „meniu”)", Toast.LENGTH_LONG).show();
+                Toast.makeText(CodeEditorActivity.this, "Captură · " + a.name + " · ține apăsat pe ea ca s-o redenumești (ex. „meniu”)", Toast.LENGTH_LONG).show();
             } });
         } });
     }
@@ -1385,6 +1398,8 @@ public final class CodeEditorActivity extends Activity {
         boolean pane = !keyboardOpen && App.get().prefs().codeShotPane();
         shotPane.setVisibility(pane ? View.VISIBLE : View.GONE);
         divider.setVisibility(pane ? View.VISIBLE : View.GONE);
+        boolean cleanStatus = status.getText().toString().startsWith("Fără greșeli");
+        status.setVisibility(keyboardOpen && cleanStatus ? View.GONE : View.VISIBLE);
         bottomBar.setVisibility(keyboardOpen ? View.GONE : View.VISIBLE);
         if (pane) fitPane();
         if (keyboardOpen) showLine(cursorLine());
@@ -1576,7 +1591,7 @@ public final class CodeEditorActivity extends Activity {
             case ShotView.TOOL_MODEL:
                 modelPixels.add(new int[]{v[0], v[1], rgb});
                 shotView.setPending(new java.util.ArrayList<int[]>(modelPixels));
-                modelDone.setText("✅ Scrie modelul (" + modelPixels.size() + ")");
+                modelDone.setText("Scrie modelul (" + modelPixels.size() + ")");
                 modelDone.setVisibility(View.VISIBLE);
                 return;
             case ShotView.TOOL_TAPZONE:
@@ -1619,7 +1634,7 @@ public final class CodeEditorActivity extends Activity {
         modelDone.setVisibility(View.GONE);
     }
 
-    /** model({p1, p2…}, {#c1, #c2…}, 24): the pixels chosen with "🔢 Model". */
+    /** model({p1, p2…}, {#c1, #c2…}, 24): the pixels chosen with "Model Model". */
     private void writeModel() {
         if (modelPixels.isEmpty()) return;
         StringBuilder pts = new StringBuilder(), cols = new StringBuilder();
@@ -1662,7 +1677,7 @@ public final class CodeEditorActivity extends Activity {
                 simResult = r;
                 int n = r.touches.size();
                 if (!App.get().prefs().codeMarksAll() || (App.get().prefs().codeMarksMask() & (1 << ShotView.CAT_SIM)) == 0) {
-                    Toast.makeText(CodeEditorActivity.this, "Simularea e ascunsă din 👁 ▾", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CodeEditorActivity.this, "Simularea e ascunsă din meniul Marcaje", Toast.LENGTH_SHORT).show();
                 }
                 simSeek.setMax(Math.max(0, n));
                 simSeek.setProgress(n);
@@ -1723,13 +1738,13 @@ public final class CodeEditorActivity extends Activity {
                 new TutorialOverlay.Step(edit, "Aici scrii codul, în stil C++: variabile (int, double, string, point, color…), if, while, for, "
                         + "funcții, struct, vector. Fiecare instrucțiune se termină cu ;"),
                 new TutorialOverlay.Step(shotPane.getVisibility() == View.VISIBLE ? shotPane : null,
-                        "Sus e captura jocului (📷 din joc sau din galerie). Alegi un instrument — 👆 Punct, ↗ Swipe, ▭ Zonă, 🎨 Culoare, "
-                        + "✂ Imagine, 🎲 Tap în zonă, 🔢 Model (3–5 pixeli) — și atingi poza: codul se scrie singur, cu coordonatele ecranului real. Tragi un marcaj → cifrele din cod "
+                        "Sus e captura jocului (din joc sau din galerie). Alegi un instrument — Punct, Swipe, Zonă, Culoare, "
+                        + "Imagine, Tap în zonă, Model (3–5 pixeli) — și atingi poza: codul se scrie singur, cu coordonatele ecranului real. Tragi un marcaj → cifrele din cod "
                         + "se schimbă. ▶ Simulează arată în ce ordine ar atinge scriptul."),
                 new TutorialOverlay.Step(shotPane.getVisibility() == View.VISIBLE ? marksBox : paneBtn,
-                        "👁 arată sau ascunde toate marcajele; ▾ alegi ce vezi (atingeri, swipe-uri, zone, culori…). "
-                        + "🖼 de sus ascunde captura ca să vezi doar codul."),
-                new TutorialOverlay.Step(insertBar, "„+ 📱 Din ecran” alege pe ecranul real al telefonului o atingere, un swipe, o culoare, o zonă sau o imagine "
+                        "Afișează sau ascunde toate marcajele; ▾ alegi ce vezi (atingeri, swipe-uri, zone, culori…). "
+                        + "Butonul de sus ascunde captura ca să vezi doar codul."),
+                new TutorialOverlay.Step(insertBar, "„+  Din ecran” alege pe ecranul real al telefonului o atingere, un swipe, o culoare, o zonă sau o imagine "
                         + "(când n-ai o captură). Restul pun if, while, for…"),
                 new TutorialOverlay.Step(status, "Aici vezi greșelile chiar în timp ce scrii, cu linia lor (de ex. „Linia 7: lipsește ;”). "
                         + "Atinge mesajul ca să sari la linie."),
@@ -1737,11 +1752,11 @@ public final class CodeEditorActivity extends Activity {
                         + "și îți arată linia și variabilele."),
                 new TutorialOverlay.Step(runBtn, "▶ pune scriptul pe panoul plutitor: deschizi jocul și apeși ▶ pe panou, acolo pornește. "
                         + "În timpul rulării: ■ (stop) și ⏸ (pauză); print() scrie în consolă. ≡ → Codul te aduce înapoi aici."),
-                new TutorialOverlay.Step(stepBtn, "👣 la fel, dar pas cu pas: o bară sus arată linia curentă și variabilele; ⏭ trece la următoarea."),
+                new TutorialOverlay.Step(stepBtn, "Pas cu pas: o bară sus arată linia curentă și variabilele; ⏭ trece la următoarea."),
                 new TutorialOverlay.Step(edit, "Când scrii, deasupra tastaturii apar nume potrivite (atingi unul ca să-l scrii) și ce așteaptă funcția, ca în C++: "
                         + "„void tap(point p, int durata = DURATA_CLICK, …)”, cu parametrul la care ești îngroșat. Merge și pentru funcțiile tale."),
-                new TutorialOverlay.Step(moreBtn, "⋮ → 📖 Documentație (fiecare funcție explicată, cu exemple; ține apăsat pe un nume din cod ca să-i vezi pagina), "
-                        + "Exemple (scripturi gata făcute), 📤 Partajează (un cod pe care îl trimiți oricui). Restul e în Avansat."),
+                new TutorialOverlay.Step(moreBtn, "⋮ → Documentație (fiecare funcție explicată, cu exemple; ține apăsat pe un nume din cod ca să-i vezi pagina), "
+                        + "Exemple (scripturi gata făcute), Partajează (un cod pe care îl trimiți oricui). Restul e în Avansat."),
                 new TutorialOverlay.Step(null, "Gata! Încearcă ⋮ → Exemple → „Începe aici”, apoi ▶. Tutorialul îl găsești oricând în ⋮ → Avansat → Tutorial."),
         };
         TutorialOverlay.show(this, steps, new TutorialOverlay.OnClosed() {

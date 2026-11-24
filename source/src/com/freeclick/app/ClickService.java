@@ -113,9 +113,9 @@ public final class ClickService extends AccessibilityService implements Playback
     private boolean returnToEditor;  // bring the editor back when the run ends
     private String previewCaption = "";
     private boolean panelHiddenByUser; // notification → "Ascunde panoul"
-    private TurboLayer turbo;          // 🔥 taps where you touch (2.2)
-    private AfkGuard afk;              // 🌙 long sessions (2.2.1)
-    private TouchListener ears;        // 👂 your fingers, for scripts (2.3)
+    private TurboLayer turbo;          // Turbo taps where you touch (2.2)
+    private AfkGuard afk;              // AFK long sessions (2.2.1)
+    private TouchListener ears;        // Atingeri your fingers, for scripts (2.3)
     private boolean systemUiOpenedByMacro;  // a step opened the shade / recents itself: don't pause for it
     private long ignoreSystemUiUntil;
 
@@ -185,7 +185,7 @@ public final class ClickService extends AccessibilityService implements Playback
         } }, 8000);
         QuickTileService.requestUpdate(this);
         notifyListeners();
-        // 🌙 a long session that Android interrupted (it stopped FreeClick) is picked up again
+        // AFK a long session that Android interrupted (it stopped FreeClick) is picked up again
         main.postDelayed(new Runnable() { public void run() { if (afk != null) afk.maybeResumeAfterKill(); } }, 2500);
     }
 
@@ -251,7 +251,7 @@ public final class ClickService extends AccessibilityService implements Playback
         if (p.equals(getPackageName()) || p.equals("android") || imePackages.contains(p)) return;
         boolean changedApp = !p.equals(foregroundPkg);
         foregroundPkg = p;
-        if (afk != null) afk.onForeground(p); // 🌙 first: AFK mode pauses outside the game and reopens it
+        if (afk != null) afk.onForeground(p); // AFK first: AFK mode pauses outside the game and reopens it
         Macro playing = engine == null ? null : engine.macro();
         if (playing != null && engine.state() == PlaybackEngine.State.RUNNING && !engine.isPreview()) {
             String lock = playing.settings.lockToPackage;
@@ -270,7 +270,7 @@ public final class ClickService extends AccessibilityService implements Playback
         if (changedApp) maybeAutostart(p);
     }
 
-    // ---- ⚡ start when an app opens (2.1)
+    // ---- Auto start when an app opens (2.1)
     private Runnable autoRun;
 
     private void maybeAutostart(final String pkg) {
@@ -286,7 +286,7 @@ public final class ClickService extends AccessibilityService implements Playback
         } else {
             boolean same = workspace() != null && m.id.equals(workspace().id);
             if (!same && workspace() != null && !isWorkspaceSaved() && ActionTree.count(workspace().actions) > 0) {
-                toast("⚡ „" + m.name + "”: ai ceva nesalvat în panou, nu îl înlocuiesc. Salvează-l sau golește panoul.");
+                toast("Auto „" + m.name + "”: ai ceva nesalvat în panou, nu îl înlocuiesc. Salvează-l sau golește panoul.");
                 return;
             }
             if (!same) load(m);
@@ -294,8 +294,8 @@ public final class ClickService extends AccessibilityService implements Playback
             panelHiddenByUser = false;
             panel.setHidden(false);
         }
-        if (!run) { toast("⚡ „" + m.name + "” e pe panou: ▶ când ești gata"); return; }
-        toast("⚡ Pornesc „" + m.name + "” în 3 s (■ pe panou: nu)");
+        if (!run) { toast("Auto „" + m.name + "” e pe panou: ▶ când ești gata"); return; }
+        toast("Auto Pornesc „" + m.name + "” în 3 s (■ pe panou: nu)");
         if (autoRun != null) main.removeCallbacks(autoRun);
         autoRun = new Runnable() { public void run() {
             autoRun = null;
@@ -412,8 +412,8 @@ public final class ClickService extends AccessibilityService implements Playback
         else steps.add(new TutorialOverlay.Step(panel.button(PanelIcon.Kind.PLUS), "+ adaugă o țintă: tap, swipe, apăsare lungă, zoom cu două degete, "
                 + "o imagine de căutat… Ținta apare pe ecran: o tragi unde trebuie, ții apăsat pe ea pentru setări."));
         steps.add(new TutorialOverlay.Step(panel.button(PanelIcon.Kind.MINUS), "− șterge ultima țintă. Ținut apăsat: le șterge pe toate (cu Anulează)."));
-        steps.add(new TutorialOverlay.Step(panel.button(PanelIcon.Kind.TURBO), "🔥 Turbo: cât e pornit, unde atingi primești o rafală de atingeri; "
-                + "ții degetul o clipă și ridici = atinge acolo non-stop până atingi din nou. × sus îl oprește. Ritmul: Setări → 🔥 Turbo."));
+        steps.add(new TutorialOverlay.Step(panel.button(PanelIcon.Kind.TURBO), "Turbo Turbo: cât e pornit, unde atingi primești o rafală de atingeri; "
+                + "ții degetul o clipă și ridici = atinge acolo non-stop până atingi din nou. × sus îl oprește. Ritmul: Setări → Turbo Turbo."));
         steps.add(new TutorialOverlay.Step(panel.button(PanelIcon.Kind.MENU), "≡: Opțiuni (Încarcă / Salvează, interval, durată, repetări), "
                 + "Arată aplicația, Oprește, iar în Avansat restul (consolă, pipetă, filmare, jurnal…)."));
         steps.add(new TutorialOverlay.Step(null, "Oprire de urgență oricând: apasă de două ori repede volum jos. "
@@ -612,7 +612,7 @@ public final class ClickService extends AccessibilityService implements Playback
         markers.setVisible(optionsScreens == 0 && !hiddenForRun && !recording.isActive() && !picking && !panelHiddenByUser && armed == null && !turboOn());
     }
 
-    // ================================================================ 🌙 AFK mode (2.2.1)
+    // ================================================================ AFK AFK mode (2.2.1)
     private AfkGuard.Host afkHost() {
         return new AfkGuard.Host() {
             public boolean afkRunning() {
@@ -655,10 +655,10 @@ public final class ClickService extends AccessibilityService implements Playback
         };
     }
 
-    /** Settings → 🌙 changed (e.g. the dim screen). */
+    /** Settings → AFK changed (e.g. the dim screen). */
     public void onAfkSettingChanged() { if (afk != null) afk.settingsChanged(); }
 
-    // ================================================================ 🔥 Turbo (2.2)
+    // ================================================================ Turbo Turbo (2.2)
     private boolean turboOn() { return turbo != null && turbo.isOn(); }
 
     @Override public void onTurbo() {
@@ -777,7 +777,7 @@ public final class ClickService extends AccessibilityService implements Playback
         askPreviewAssumption(null, false);
     }
 
-    /** Editor 👁: preview its (maybe unsaved) copy over the app below, then go back to the editor. */
+    /** Editor Previzualizare: preview its (maybe unsaved) copy over the app below, then go back to the editor. */
     public void previewFromEditor(Macro edited) {
         if (edited == null || recording.isActive()) return;
         if (isPlaying()) engine.stop();
@@ -944,7 +944,7 @@ public final class ClickService extends AccessibilityService implements Playback
         addLog((runPreview ? "Previzualizare „" : "Start „") + target.name + "” · viteză " + FloatingPanel.formatSpeed(target.settings.speed)
                 + (runFromIndex > 0 ? " · de la pasul " + (runFromIndex + 1) : ""));
         if (runPreview) {
-            panel.setInfo("👁");
+            panel.setInfo("Previzualizare");
             String launch = target.settings.launchPackage == null ? "" : target.settings.launchPackage.trim();
             if (launch.length() > 0) feedback.showLabel("Ar deschide întâi „" + appLabel(launch) + "”");
         }
@@ -952,7 +952,7 @@ public final class ClickService extends AccessibilityService implements Playback
         engine.setPreview(runPreview, runPreviewFound);
         consoleAutoOpened = false;
         consoleOverlapWarned = false;
-        if (prefs.consoleSteps()) console.add((runPreview ? "👁 Previzualizare „" : "▶ Start „") + target.name + "”", PlaybackEngine.PRINT_INFO);
+        if (prefs.consoleSteps()) console.add((runPreview ? "Previzualizare „" : "▶ Start „") + target.name + "”", PlaybackEngine.PRINT_INFO);
         if (!runPreview) afk.onRunStarted(deepCopy(target), false, runMacro == null, foregroundPkg);
         Macro play = target;
         if (target.settings.syncTaps && runFromIndex == 0) { // 🖐 taps one after another, all at the same moment
@@ -965,18 +965,18 @@ public final class ClickService extends AccessibilityService implements Playback
         engine.start(play, lib, runFromIndex);
     }
 
-    /** While an image is being looked for, the panel says so: "🔍 Collect · 3 s" (never looks stuck). */
+    /** While an image is being looked for, the panel says so: "Căutare Collect · 3 s" (never looks stuck). */
     private final Runnable statusTick = new Runnable() {
         @Override public void run() {
             if (engine == null || engine.state() == PlaybackEngine.State.FINISHED || !colorRun) return;
             Action a = engine.imageBeingSearched();
             if (a != null && engine.state() == PlaybackEngine.State.RUNNING && a.img != null) {
                 String n = a.img.name == null || a.img.name.trim().isEmpty() ? "imagine" : a.img.name.trim();
-                panel.setInfo("🔍 " + n + " · " + (engine.imageSearchElapsed() / 1000) + " s");
+                panel.setInfo("Căutare " + n + " · " + (engine.imageSearchElapsed() / 1000) + " s");
             }
             Action r = engine.readBeingDone();
             if (r != null && engine.state() == PlaybackEngine.State.RUNNING) {
-                panel.setInfo("📖 " + (r.varName == null || r.varName.isEmpty() ? "citesc" : r.varName));
+                panel.setInfo("Citire " + (r.varName == null || r.varName.isEmpty() ? "citesc" : r.varName));
             }
             main.postDelayed(this, 1000);
         }
@@ -1471,7 +1471,7 @@ public final class ClickService extends AccessibilityService implements Playback
         }
         if (engine.isPreview()) {
             previewCaption = step + "/" + totalSteps + " · " + ActionFormatter.typeName(action.type);
-            panel.setInfo("👁 " + step + "/" + totalSteps);
+            panel.setInfo("Previzualizare " + step + "/" + totalSteps);
         } else {
             panel.setInfo(loop + "/" + (totalLoops == 0 ? "∞" : String.valueOf(totalLoops)) + rateSuffix());
         }
@@ -1485,7 +1485,7 @@ public final class ClickService extends AccessibilityService implements Playback
         } else if (PlaybackEngine.NOTICE_APP_SLOW.equals(code)) {
             addLog("  ↪ " + appLabel(pkg) + " nu a apărut la timp; continui");
         } else if (PlaybackEngine.NOTICE_IMAGE_COVERED.equals(code) && action != null && action.img != null) {
-            toast("🔍 " + action.img.displayName() + " pare acoperită de panou. Mută panoul în altă parte.");
+            toast("Căutare " + action.img.displayName() + " pare acoperită de panou. Mută panoul în altă parte.");
             addLog("  ↪ imaginea pare acoperită de panou");
         }
     }
@@ -1494,7 +1494,7 @@ public final class ClickService extends AccessibilityService implements Playback
         if (script != null && script.stepsDone != null) {
             java.util.concurrent.CountDownLatch d = script.stepsDone;
             if (!PlaybackEngine.REASON_DONE.equals(reason) && !PlaybackEngine.REASON_STOPPED.equals(reason)) {
-                print("⚠ ruleaza(pași) s-a oprit: " + reason, PlaybackEngine.PRINT_WARN);
+                print("Atenție: ruleaza(pași) s-a oprit: " + reason, PlaybackEngine.PRINT_WARN);
             }
             d.countDown();
             return;
@@ -1512,7 +1512,7 @@ public final class ClickService extends AccessibilityService implements Playback
             } }, 900);
         }
         if (wasPreview) {
-            String m = PlaybackEngine.REASON_DONE.equals(reason) ? "Previzualizare gata ✅ (" + engine.executedSteps() + " pași; nimic nu a fost atins)"
+            String m = PlaybackEngine.REASON_DONE.equals(reason) ? "Previzualizare gata OK (" + engine.executedSteps() + " pași; nimic nu a fost atins)"
                     : PlaybackEngine.REASON_CONDITION_TIMEOUT.equals(reason) ? "Previzualizare oprită: aici macro-ul ar aștepta culoarea (la nesfârșit sau până la limită)."
                     : PlaybackEngine.REASON_STOPPED.equals(reason) ? null : "Previzualizare oprită (" + reason + ")";
             addLog("Sfârșit previzualizare (" + reason + ")");
@@ -1526,7 +1526,7 @@ public final class ClickService extends AccessibilityService implements Playback
         if (colorRun) sampler.stop();
         int failed = engine.failedGestures();
         String msg = null;
-        if (PlaybackEngine.REASON_DONE.equals(reason)) msg = "Gata ✅ (" + engine.executedSteps() + " pași)";
+        if (PlaybackEngine.REASON_DONE.equals(reason)) msg = "Gata OK (" + engine.executedSteps() + " pași)";
         else if (PlaybackEngine.REASON_TIME_LIMIT.equals(reason)) msg = "Oprit: s-a atins limita de timp";
         else if (PlaybackEngine.REASON_CYCLE.equals(reason)) msg = "Combinația se apelează pe sine (buclă). Verifică ce conține.";
         else if (PlaybackEngine.REASON_EMPTY.equals(reason)) msg = "Nu există acțiuni active de rulat.";
@@ -1535,7 +1535,7 @@ public final class ClickService extends AccessibilityService implements Playback
         else if (PlaybackEngine.REASON_NO_CAPTURE.equals(reason)) msg = "Oprit: nu pot citi ecranul (pentru culori sau imagini).";
         else if (PlaybackEngine.REASON_PROTECTED.equals(reason)) msg = "Oprit: aplicația asta nu lasă ecranul să fie citit (e protejată), deci imaginile nu pot fi căutate aici.";
         else if (PlaybackEngine.REASON_IMAGE_MISSING.equals(reason)) msg = "Oprit: lipsește poza unui pas cu imagine. Deschide pasul și recapturează imaginea.";
-        else if (PlaybackEngine.REASON_HIT_LIMIT.equals(reason)) msg = "Gata ✅: s-a atins numărul de găsiri cerut.";
+        else if (PlaybackEngine.REASON_HIT_LIMIT.equals(reason)) msg = "Gata OK: s-a atins numărul de găsiri cerut.";
         if (failed > 0) msg = (msg == null ? "" : msg + "\n") + failed + " gesturi au fost anulate de sistem (ex.: ai atins ecranul în timpul redării).";
         if (!engine.imageHits().isEmpty()) {
             StringBuilder hits = new StringBuilder();
@@ -1658,7 +1658,7 @@ public final class ClickService extends AccessibilityService implements Playback
         Intent li = getPackageManager().getLaunchIntentForPackage(pkg);
         if (li == null) return false;
         li.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-        if (afk != null) afk.runOpened(pkg); // 🌙 an app the run opens itself is not "the game went away"
+        if (afk != null) afk.runOpened(pkg); // AFK an app the run opens itself is not "the game went away"
         try {
             startActivity(li);
             addLog("  ↪ deschid " + appLabel(pkg));
@@ -1886,11 +1886,11 @@ public final class ClickService extends AccessibilityService implements Playback
     /** notifica(…) from a script: a normal notification (needs the notification permission on Android 13+). */
     void scriptNotification(String title, String text) {
         if (!ControlNotification.scriptMessage(this, title, text)) {
-            print("⚠ notifica(): telefonul nu lasă FreeClick să trimită notificări (Setări → Aplicații → FreeClick → Notificări)", PlaybackEngine.PRINT_WARN);
+            print("Atenție: notifica(): telefonul nu lasă FreeClick să trimită notificări (Setări → Aplicații → FreeClick → Notificări)", PlaybackEngine.PRINT_WARN);
         }
     }
 
-    // ================================================================ 👂 your fingers (2.3)
+    // ================================================================ Atingeri your fingers (2.3)
     TouchTracker touchTracker() { return ears.tracker; }
 
     /** A script listens to your fingers (or stops): the layer goes up only where Android cannot send copies. */
@@ -1943,9 +1943,9 @@ public final class ClickService extends AccessibilityService implements Playback
         panelHiddenByUser = false;
         if (!panel.isShown()) presentWorkspace();
         panel.setHidden(false);
-        panel.setInfo("📜");
+        panel.setInfo("Script");
         updateMarkerVisibility();
-        toast("📜 „" + m.name + "” e pe panou" + (step ? " (pas cu pas)" : "") + ": deschide jocul și apasă ▶");
+        toast("Script „" + m.name + "” e pe panou" + (step ? " (pas cu pas)" : "") + ": deschide jocul și apasă ▶");
         notifyListeners();
         return true;
     }
@@ -1987,7 +1987,7 @@ public final class ClickService extends AccessibilityService implements Playback
         panel.setPreview(false);
         panel.setCompact(true);
         panel.setState(FloatingPanel.State.PLAYING);
-        panel.setInfo("📜");
+        panel.setInfo("Script");
         hiddenForRun = true;
         updateMarkerVisibility();
         markers.setInteractive(false);
@@ -1996,7 +1996,7 @@ public final class ClickService extends AccessibilityService implements Playback
         consoleAutoOpened = false;
         consoleOverlapWarned = false;
         if (prefs.consoleOpen()) { console.show(); console.setRunning(true); }
-        console.add("📜 Pornesc scriptul „" + m.name + "”" + (step ? " pas cu pas" : ""), PlaybackEngine.PRINT_INFO);
+        console.add("Pornesc scriptul „" + m.name + "”" + (step ? " pas cu pas" : ""), PlaybackEngine.PRINT_INFO);
         addLog("Script „" + m.name + "”" + (step ? " (pas cu pas)" : ""));
         if (!step) afk.onRunStarted(deepCopy(m), true, false, foregroundPkg);
         s.start();
@@ -2015,7 +2015,7 @@ public final class ClickService extends AccessibilityService implements Playback
     @Override public void runScriptStep(Macro m, int times, Runnable done) {
         com.freeclick.core.script.ScriptError err = com.freeclick.core.script.ScriptRunner.check(m.script);
         if (err != null) {
-            print("⚠ Scriptul „" + m.name + "” are o greșeală: " + err.describe() + " (îl sar)", PlaybackEngine.PRINT_WARN);
+            print("Atenție: Scriptul „" + m.name + "” are o greșeală: " + err.describe() + " (îl sar)", PlaybackEngine.PRINT_WARN);
             done.run();
             return;
         }
@@ -2040,7 +2040,7 @@ public final class ClickService extends AccessibilityService implements Playback
             nestedSampler = true;
             sampler.start();
         }
-        console.add("📜 „" + nestedMacro.name + "”", PlaybackEngine.PRINT_INFO);
+        console.add("Script „" + nestedMacro.name + "”", PlaybackEngine.PRINT_INFO);
         s.start();
     }
 
@@ -2048,7 +2048,7 @@ public final class ClickService extends AccessibilityService implements Playback
         if (s != nested) return;
         nested = null;
         if (error != null) {
-            console.add("❌ „" + nestedMacro.name + "”: " + error.describe(), PlaybackEngine.PRINT_WARN);
+            console.add("Eroare:  „" + nestedMacro.name + "”: " + error.describe(), PlaybackEngine.PRINT_WARN);
             addLog("Script „" + nestedMacro.name + "”: " + error.describe());
         }
         nestedLeft--;
@@ -2120,7 +2120,7 @@ public final class ClickService extends AccessibilityService implements Playback
                         if (!completed) addLog("  ↪ gest anulat de sistem");
                         if (completed) {
                             tapRate.add(plan.strokes.size(), SystemClock.uptimeMillis());
-                            if (script != null) panel.setInfo("📜" + rateSuffix());
+                            if (script != null) panel.setInfo("Script" + rateSuffix());
                         }
                         cb.onResult(completed);
                     }
@@ -2135,7 +2135,7 @@ public final class ClickService extends AccessibilityService implements Playback
     /** 'ruleaza(pasi)': play steps with the normal engine; the script waits until onFinished. */
     void runStepsForScript(ScriptSession s, Macro m) {
         if (s.nested) { // the engine is busy with the macro that started this script
-            print("⚠ ruleaza(pasi…) nu merge într-un script pornit dintr-un macro: pune pașii direct în macro", PlaybackEngine.PRINT_WARN);
+            print("Atenție: ruleaza(pasi…) nu merge într-un script pornit dintr-un macro: pune pașii direct în macro", PlaybackEngine.PRINT_WARN);
             if (s.stepsDone != null) s.stepsDone.countDown();
             return;
         }
@@ -2196,16 +2196,16 @@ public final class ClickService extends AccessibilityService implements Playback
         updateMarkerVisibility();
         String msg;
         if (error != null) {
-            msg = "❌ " + error.describe();
+            msg = "Eroare:  " + error.describe();
             console.add(msg, PlaybackEngine.PRINT_WARN);
             if (!console.isShown() && panel.isShown()) console.show();
-        } else if (com.freeclick.core.script.ScriptRunner.DONE.equals(reason)) msg = "✅ Scriptul s-a terminat";
+        } else if (com.freeclick.core.script.ScriptRunner.DONE.equals(reason)) msg = "OK Scriptul s-a terminat";
         else if (com.freeclick.core.script.ScriptRunner.SCRIPT_STOP.equals(reason)) msg = "■ Scriptul s-a oprit (stop())";
         else msg = "■ Script oprit";
         if (error == null) console.add(msg, PlaybackEngine.PRINT_INFO);
         addLog(msg);
         toast(msg);
-        if (armed != null && panel != null) panel.setInfo("📜"); // ▶ runs it again; ≡ → Codul to edit it
+        if (armed != null && panel != null) panel.setInfo("Script"); // ▶ runs it again; ≡ → Codul to edit it
         if (error != null) {
             final Intent back = new Intent(this, CodeEditorActivity.class).putExtra(CodeEditorActivity.EXTRA_ID, s.macro.id)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
@@ -2236,7 +2236,7 @@ public final class ClickService extends AccessibilityService implements Playback
         int[] cr = console == null ? null : console.screenRect();
         if (cr != null && req.x1 < cr[2] && req.x2 > cr[0] && req.y1 < cr[3] && req.y2 > cr[1] && !consoleOverlapWarned) {
             consoleOverlapWarned = true;
-            console.add("⚠ consola stă peste zona de citit: mut-o (trage de titlu) sau strânge-o —", PlaybackEngine.PRINT_WARN);
+            console.add("Atenție: consola stă peste zona de citit: mut-o (trage de titlu) sau strânge-o —", PlaybackEngine.PRINT_WARN);
         }
         sampler.whenFrame(req.notBefore, new ScreenSampler.FrameCallback() {
             @Override public void onFrame(ScreenFrame f) {
@@ -2283,7 +2283,7 @@ public final class ClickService extends AccessibilityService implements Playback
 
     /** One line about a read, for the zone picker and the test: „Gold 1,250” = 1250 · sigur 93%. */
     static String describeRead(TextReader.Result res, int mode) {
-        if (res.problem != null) return "⚠ " + res.problem;
+        if (res.problem != null) return "Atenție: " + res.problem;
         String t = "„" + res.text.replace('\n', ' ') + "”";
         if (mode == com.freeclick.core.Action.READ_NUMBER) {
             t += res.number == null ? " · nu e un număr" : " = " + com.freeclick.core.Expr.format(res.number);
@@ -2294,7 +2294,7 @@ public final class ClickService extends AccessibilityService implements Playback
     // ================================================================ notification controls
     void updateNotification() {
         if (notif == null || engine == null) return;
-        if (afk != null && afk.ownsNotification()) { notif.cancel(); return; } // the 🌙 notification has the controls
+        if (afk != null && afk.ownsNotification()) { notif.cancel(); return; } // the AFK notification has the controls
         if (panel == null || !panel.isShown()) { notif.cancel(); return; }
         String st;
         if (recording.isActive()) st = "recording";
@@ -2551,14 +2551,14 @@ public final class ClickService extends AccessibilityService implements Playback
                 String hex = com.freeclick.core.ColorMatch.toHex(rgb);
                 android.content.ClipboardManager cm = (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                 if (cm != null) cm.setPrimaryClip(android.content.ClipData.newPlainText("culoare", hex));
-                String line = "🎨 (" + r.left + ", " + r.top + ") " + ImageCaptureView.describeColor(rgb);
+                String line = "Culoare (" + r.left + ", " + r.top + ") " + ImageCaptureView.describeColor(rgb);
                 console.add(line, PlaybackEngine.PRINT_USER);
                 toast(hex + " copiat · " + line.substring(3));
             }
         }, new Runnable() { public void run() { if (prefs.consoleOpen()) console.show(); } });
     }
 
-    // ---- "🔍 Testează citirea": read the zone now, show what was read, teach the letters
+    // ---- "Căutare Testează citirea": read the zone now, show what was read, teach the letters
     void testRead(final Action a, final Macro owner, final Runnable after) {
         if (!ScreenSampler.supported()) { toast("Citirea din zonă are nevoie de Android 11 sau mai nou."); if (after != null) after.run(); return; }
         picking = true;
@@ -2829,7 +2829,7 @@ public final class ClickService extends AccessibilityService implements Playback
             for (ImageMatcher.Match m : res.matches) found.add(new android.graphics.RectF(m.x, m.y, m.x + m.w, m.y + m.h));
             if (res.best != null) closest = new android.graphics.RectF(res.best.x, res.best.y, res.best.x + res.best.w, res.best.y + res.best.h);
             int pct = res.best == null ? 0 : (int) Math.round(res.best.similarity() * 100);
-            if (!found.isEmpty()) msg = "Găsit ✅ " + pct + "%" + (found.size() > 1 ? " · de " + found.size() + " ori" : "");
+            if (!found.isEmpty()) msg = "Găsit OK " + pct + "%" + (found.size() > 1 ? " · de " + found.size() + " ori" : "");
             else if (res.best == null) msg = "Nu apare acum";
             else if (res.best.colorDiff > ImageMatcher.maxColorDiff(50)) msg = "Nu apare acum (alt colorit)";
             else msg = "Nu apare acum · cel mai apropiat " + pct + "%";
@@ -2911,7 +2911,7 @@ public final class ClickService extends AccessibilityService implements Playback
 
     interface ShotTaken { void onShot(android.graphics.Bitmap b); }
 
-    /** ≡ → "📷 Captură pentru codul …": saved with the script, the game stays on screen (several in a row). */
+    /** ≡ → "Captură pentru codul …": saved with the script, the game stays on screen (several in a row). */
     private void shotForScript(final Macro script) {
         captureScreenshot(new ShotTaken() {
             @Override public void onShot(final android.graphics.Bitmap b) {
@@ -2922,7 +2922,7 @@ public final class ClickService extends AccessibilityService implements Playback
                         ShotStore st = App.get().shots();
                         int n = st.list(script.id).size() + 1;
                         st.add(script.id, b, "captură " + n);
-                        msg = "📷 Salvată în „" + script.name + "” (" + n + "/" + ShotStore.MAX_PER_SCRIPT + ")";
+                        msg = "Captură salvată în „" + script.name + "” (" + n + "/" + ShotStore.MAX_PER_SCRIPT + ")";
                     } catch (Exception e) {
                         msg = "Nu am putut salva captura: " + e.getMessage();
                     }
@@ -2961,7 +2961,7 @@ public final class ClickService extends AccessibilityService implements Playback
         android.widget.TextView msg = Ui.text(this, what == EDITOR_IMAGE ? "Deschide ecranul cu butonul, apoi:" : "Deschide ecranul potrivit, apoi:", 14, 0xFFFFFFFF, false);
         bar.addView(msg, new android.widget.LinearLayout.LayoutParams(0, android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 1));
         String goText = what == EDITOR_IMAGE ? "✂ DECUPEAZĂ" : what == EDITOR_ZONE ? "▭ ALEGE ZONA" : what == EDITOR_SWIPE ? "↗ ARATĂ SWIPE-UL"
-                : what == EDITOR_SHOT ? "📷 CAPTUREAZĂ" : "🎯 ALEGE PUNCTUL";
+                : what == EDITOR_SHOT ? "CAPTUREAZĂ" : " ALEGE PUNCTUL";
         android.widget.TextView go = Ui.text(this, goText, 14, Ui.ACCENT, true);
         go.setPadding(p, p / 2, p, p / 2);
         Ui.clickable(go, new View.OnClickListener() { public void onClick(View v) {
@@ -3010,7 +3010,7 @@ public final class ClickService extends AccessibilityService implements Playback
     /** The step chosen on the screen for the editor (once). */
     public Action takeEditorAction() { Action a = editorAction; editorAction = null; return a; }
 
-    /** The editor's "🎯" in a colour step: choose the point (and colour) again on the real screen. */
+    /** The editor's "" in a colour step: choose the point (and colour) again on the real screen. */
     public void pickColorForEditor(final Action draft) {
         startPick(ImageCaptureView.MODE_COLOR, new Picked() {
             @Override public void onPicked(android.graphics.Rect r, int rgb) {
@@ -3029,7 +3029,7 @@ public final class ClickService extends AccessibilityService implements Playback
         }, new Runnable() { public void run() { bringEditorBack(); } });
     }
 
-    /** The editor's "🔍 Testează citirea". */
+    /** The editor's "Căutare Testează citirea". */
     public void testReadForEditor(Action draft, Macro owner) {
         testRead(draft, owner, new Runnable() { public void run() { bringEditorBack(); } });
     }

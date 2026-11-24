@@ -21,6 +21,10 @@ import android.widget.Toast;
 /** App settings. Everything is free: there are no locked options. */
 public final class SettingsActivity extends Activity {
     private Prefs prefs;
+    private LinearLayout[] settingsPages;
+    private TextView[] settingsTabs;
+    private ScrollView settingsScroll;
+    private TextView serviceAccessStatus;
 
     @Override protected void onCreate(Bundle b) {
         super.onCreate(b);
@@ -29,31 +33,90 @@ public final class SettingsActivity extends Activity {
         LinearLayout root = Ui.vertical(this);
         root.addView(Ui.header(this, "Setări", false, false, null, null));
         ScrollView sv = new ScrollView(this);
-        final LinearLayout top = Ui.vertical(this);
+        settingsPages = new LinearLayout[5];
+        settingsTabs = new TextView[5];
+        LinearLayout pageStack = Ui.vertical(this);
         int p = Ui.dp(this, 16);
-        top.setPadding(p, Ui.dp(this, 4), p, p);
-        sv.addView(top);
-        // every area is a drop-down: closed it shows what is inside, open it shows only its own settings
+        pageStack.setPadding(p, Ui.dp(this, 4), p, p);
+        String[] pageNames = {"Acces", "Aspect", "Panou", "Rulare", "Mai mult"};
+        for (int i = 0; i < settingsPages.length; i++) {
+            settingsPages[i] = Ui.vertical(this);
+            settingsPages[i].setVisibility(i == 0 ? View.VISIBLE : View.GONE);
+            pageStack.addView(settingsPages[i], Ui.matchWrap());
+        }
+        sv.addView(pageStack);
+        settingsScroll = sv;
+        LinearLayout nav = Ui.horizontal(this);
+        nav.setGravity(android.view.Gravity.CENTER);
+        nav.setPadding(Ui.dp(this, 8), Ui.dp(this, 6), Ui.dp(this, 8), Ui.dp(this, 6));
+        nav.setBackgroundColor(Ui.SURFACE);
+        for (int i = 0; i < pageNames.length; i++) addSettingsTab(nav, i, pageNames[i]);
+        root.addView(nav, Ui.matchWrap());
+        LinearLayout top = settingsPages[0];
+        top.addView(Ui.sectionLabel(this, "ACCES ȘI PERMISIUNI"));
+        LinearLayout accessRow = Ui.settingRow(this, "Serviciul de automatizare", accessibilityEnabled()
+                ? "Activat" : "Dezactivat · necesar pentru panoul plutitor", new View.OnClickListener() {
+                    @Override public void onClick(View v) {
+                        try { startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)); }
+                        catch (RuntimeException e) { startActivity(new Intent(Settings.ACTION_SETTINGS)); }
+                    }
+                });
+        LinearLayout accessCopy = (LinearLayout) accessRow.getChildAt(0);
+        serviceAccessStatus = (TextView) accessCopy.getChildAt(1);
+        top.addView(accessRow);
+        if (!accessibilityEnabled()) top.addView(Ui.muted(this, "FreeClick cere permisiunea de accesibilitate doar ca să execute atingerile pe care le configurezi. "
+                + "Activeaz-o în lista de servicii Android."));
+        if (Build.VERSION.SDK_INT >= 33) {
+            Ui.toggleRow(top, "Controale în notificare", "Play, pauză și stop cât timp panoul este pornit",
+                    prefs.notificationControls(), new CompoundButton.OnCheckedChangeListener() {
+                        @Override public void onCheckedChanged(CompoundButton b, boolean on) {
+                            prefs.setNotificationControls(on);
+                            if (on && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                                    != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                                requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 2);
+                            }
+                            ClickService s = ClickService.get();
+                            if (s != null) s.onNotificationSettingChanged();
+                        }
+                    });
+        }
+        if (Build.VERSION.SDK_INT >= 31) {
+            AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+            if (!am.canScheduleExactAlarms()) {
+                top.addView(Ui.settingRow(this, "Alarme exacte", "Pentru programări la ora setată", new View.OnClickListener() {
+                    @Override public void onClick(View v) {
+                        try { startActivity(new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                                Uri.parse("package:" + getPackageName()))); }
+                        catch (RuntimeException ignored) { }
+                    }
+                }));
+            }
+        }
+        // Settings are split into task-based destinations. Each page keeps its own disclosure groups.
         LinearLayout f;
         root.addView(sv, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
         setContentView(root);
 
-        TextView intro = Ui.text(this, "Ajustează comportamentul panoului, automatizarea și datele aplicației.", 13, Ui.MUTED, false);
-        intro.setPadding(Ui.dp(this, 14), Ui.dp(this, 13), Ui.dp(this, 14), Ui.dp(this, 13));
-        intro.setBackground(Ui.surface(this, Ui.SURFACE, 14));
-        LinearLayout.LayoutParams introLp = Ui.matchWrap();
-        introLp.bottomMargin = Ui.dp(this, 10);
-        top.addView(intro, 0, introLp);
-        top.addView(Ui.sectionLabel(this, "Ajutor și instrumente"), 1);
-        top.addView(Ui.actionRow(this, "🧪 Laborator: măsoară telefonul tău", new View.OnClickListener() {
-            @Override public void onClick(View v) { startActivity(new Intent(SettingsActivity.this, LabActivity.class)); }
-        }));
-        top.addView(Ui.actionRow(this, "📖 Ce face fiecare setare", new View.OnClickListener() {
+        top = settingsPages[1];
+        top.addView(Ui.sectionLabel(this, "ASPECT ȘI ACCESIBILITATE"));
+        top.addView(Ui.muted(this, "FreeClick folosește mărimea textului și setările de accesibilitate ale Android. "
+                + "Controalele rămân compatibile cu cititoarele de ecran și navigarea sistemului."));
+        top.addView(Ui.settingRow(this, "Mărime text și afișaj", "Deschide setările de afișare Android", new View.OnClickListener() {
             @Override public void onClick(View v) {
-                startActivity(new Intent(SettingsActivity.this, DocsActivity.class).putExtra(DocsActivity.EXTRA_CATEGORY, "Setări și aplicație"));
+                try { startActivity(new Intent(Settings.ACTION_DISPLAY_SETTINGS)); }
+                catch (RuntimeException e) { startActivity(new Intent(Settings.ACTION_SETTINGS)); }
             }
         }));
-        f = Section.add(top, "set.safety", "🛡 Siguranță", "oprire de urgență, pauză la atingere, alte aplicații").body;
+        top.addView(Ui.settingRow(this, "Cititor de ecran, contrast și animații", "Opțiuni de accesibilitate Android", new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                try { startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)); }
+                catch (RuntimeException e) { startActivity(new Intent(Settings.ACTION_SETTINGS)); }
+            }
+        }));
+
+        top = settingsPages[3];
+        top.addView(Ui.sectionLabel(this, "COMPORTAMENT ȘI SIGURANȚĂ"));
+        f = Section.add(top, "set.safety", "Siguranță", "oprire de urgență, pauză la atingere, integrări").body;
         Ui.toggleRow(f, "Oprire de urgență", "Apasă de 2 ori rapid volum jos ca să oprești tot", prefs.volumeEmergencyStop(),
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override public void onCheckedChanged(CompoundButton b, boolean on) {
@@ -78,7 +141,9 @@ public final class SettingsActivity extends Activity {
                 + "com.freeclick.action.STOP oprește. Lasă oprit dacă nu folosești asta: altfel orice aplicație "
                 + "instalată ar putea porni macro-uri."));
 
-        f = Section.add(top, "set.points", "📍 Puncte pe ecran", "ținte, puncte înregistrate, unde atinge").body;
+        top = settingsPages[2];
+        top.addView(Ui.sectionLabel(this, "PANOU ȘI AFIȘAJ"));
+        f = Section.add(top, "set.points", "Puncte pe ecran", "ținte, puncte înregistrate, feedback vizual").body;
         f.addView(Ui.muted(this, "Ascunderea punctelor nu schimbă nimic la rulare: atingerile se fac la fel. "
                 + "Le poți ascunde/arăta rapid și din panou: ≡ → Ascunde punctele."));
         Ui.toggleRow(f, "Ținte în modul manual", "Cercurile numerotate și swipe-urile S/E (le muți și le setezi)",
@@ -102,19 +167,7 @@ public final class SettingsActivity extends Activity {
                     @Override public void onCheckedChanged(CompoundButton b, boolean on) { prefs.setShowTouches(on); }
                 });
 
-        f = Section.add(top, "set.panel", "🎛 Panou și redare", "notificare, opacitate, mărime, numărătoare").body;
-        Ui.toggleRow(f, "Controale în notificare", "Pornește / pauză / stop și ascunde panoul din bara de notificări, cât timp panoul e pornit",
-                prefs.notificationControls(), new CompoundButton.OnCheckedChangeListener() {
-                    @Override public void onCheckedChanged(CompoundButton b, boolean on) {
-                        prefs.setNotificationControls(on);
-                        if (on && Build.VERSION.SDK_INT >= 33 && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
-                                != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                            requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 2);
-                        }
-                        ClickService s = ClickService.get();
-                        if (s != null) s.onNotificationSettingChanged();
-                    }
-                });
+        f = Section.add(top, "set.panel", "Panou plutitor", "dimensiune, opacitate, numărătoare").body;
         seek(f, "Opacitate panou", 30, 100, prefs.panelOpacity(), "%", new Setter() {
             public void set(int v) { prefs.setPanelOpacity(v); }
         });
@@ -126,8 +179,19 @@ public final class SettingsActivity extends Activity {
         });
         f.addView(Ui.muted(this, "Mărimea/opacitatea se aplică la următoarea deschidere a panoului."));
 
+        top = settingsPages[4];
+        top.addView(Ui.sectionLabel(this, "INSTRUMENTE ȘI DATE"));
         touchSection(top);
-        f = Section.add(top, "set.afk", "🌙 Mod AFK (sesiuni lungi)", prefs.afkOn() ? "pornit · ecran aprins, se reface singur" : "oprit").body;
+        top.addView(Ui.actionRow(this, "Laborator · verifică funcțiile telefonului", new View.OnClickListener() {
+            @Override public void onClick(View v) { startActivity(new Intent(SettingsActivity.this, LabActivity.class)); }
+        }));
+        top.addView(Ui.actionRow(this, "Ajutor și explicații", new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                startActivity(new Intent(SettingsActivity.this, DocsActivity.class).putExtra(DocsActivity.EXTRA_CATEGORY, "Setări și aplicație"));
+            }
+        }));
+        top = settingsPages[3];
+        f = Section.add(top, "set.afk", "Sesiuni lungi", prefs.afkOn() ? "pornit · ecran aprins, se reface singur" : "oprit").body;
         Ui.toggleRow(f, "Mod AFK", "Cât rulează ceva: ecranul rămâne aprins, FreeClick are notificarea lui (Android nu îl oprește "
                 + "după ore) și face pauză dacă blochezi telefonul.", prefs.afkOn(), new CompoundButton.OnCheckedChangeListener() {
                     @Override public void onCheckedChanged(CompoundButton b, boolean on) { prefs.setAfkOn(on); }
@@ -152,10 +216,10 @@ public final class SettingsActivity extends Activity {
                 });
         batteryRow(f);
 
-        f = Section.add(top, "set.turbo", "🔥 Turbo", "atingi și dă rafale exact acolo · " + prefs.turboRate() + "/s").body;
-        f.addView(Ui.muted(this, "Apasă 🔥 pe panou. Cât e pornit: o atingere scurtă dă o rafală pe locul acela, "
+        f = Section.add(top, "set.turbo", "Turbo", "rafale la atingere · " + prefs.turboRate() + "/s").body;
+        f.addView(Ui.muted(this, "Apasă butonul Turbo din panou. Cât e pornit: o atingere scurtă dă o rafală pe locul acela, "
                 + "ținut apăsat atinge acolo non-stop până atingi din nou ecranul, iar un swipe trece normal. × sus îl oprește."));
-        Ui.toggleRow(f, "Buton 🔥 pe panou", "Butonul apare în modurile manual și înregistrare", prefs.turboButton(),
+        Ui.toggleRow(f, "Buton Turbo pe panou", "Butonul apare în modurile manual și înregistrare", prefs.turboButton(),
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override public void onCheckedChanged(CompoundButton b, boolean on) {
                         prefs.setTurboButton(on);
@@ -181,8 +245,10 @@ public final class SettingsActivity extends Activity {
             public void set(int v) { prefs.setTurboSpread(v); }
         });
 
+        top = settingsPages[4];
         lettersSection(top);
-        f = Section.add(top, "set.video", "🎥 Filmare ecran", new String[]{"calitate mică", "calitate medie", "calitate mare"}[Math.max(0, Math.min(2, prefs.videoQuality()))]).body;
+        top = settingsPages[3];
+        f = Section.add(top, "set.video", "Filmare ecran", new String[]{"calitate mică", "calitate medie", "calitate mare"}[Math.max(0, Math.min(2, prefs.videoQuality()))]).body;
         RadioGroup rg = new RadioGroup(this);
         String[] q = {"Mică (960p, fișiere mici)", "Medie (1280p)", "Mare (1920p)"};
         for (int i = 0; i < q.length; i++) {
@@ -198,23 +264,8 @@ public final class SettingsActivity extends Activity {
         });
         f.addView(rg);
 
-        if (Build.VERSION.SDK_INT >= 31) {
-            AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-            if (!am.canScheduleExactAlarms()) {
-                f = Section.add(top, "set.alarms", "⏰ Programări", "alarme exacte").body;
-                f.addView(Ui.muted(this, "Fără „Alarme exacte”, macro-urile programate pornesc cu până la un minut întârziere."));
-                f.addView(Ui.button(this, "Permite alarme exacte", new View.OnClickListener() {
-                    @Override public void onClick(View v) {
-                        try {
-                            startActivity(new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
-                                    Uri.parse("package:" + getPackageName())));
-                        } catch (RuntimeException ignored) { }
-                    }
-                }));
-            }
-        }
-
-        f = Section.add(top, "set.data", "💾 Date și backup", App.get().repo().list().size() + " salvări · backup, restaurare").body;
+        top = settingsPages[4];
+        f = Section.add(top, "set.data", "Date și backup", App.get().repo().list().size() + " salvări · export, restaurare").body;
         f.addView(Ui.muted(this, "Salvările, ciornele „Nesalvat”, programările și setările rămân la fiecare actualizare. "
                 + "Backup-ul e pentru cazul în care dezinstalezi aplicația sau schimbi telefonul."));
         f.addView(Ui.settingRow(this, "Exportă backup complet", App.get().repo().list().size()
@@ -226,7 +277,7 @@ public final class SettingsActivity extends Activity {
             @Override public void onClick(View v) { startRestore(); }
         }));
 
-        top.addView(Ui.sectionLabel(this, "Despre"));
+        top.addView(Ui.sectionLabel(this, "DESPRE"));
         top.addView(Ui.muted(this, "FreeClick 2.5 · gratuit, fără reclame, fără internet. Salvările stau doar pe telefon."));
     }
 
@@ -234,10 +285,10 @@ public final class SettingsActivity extends Activity {
     private void lettersSection(LinearLayout top) {
         final Letters letters = App.get().letters();
         final com.freeclick.core.FontBook book = letters.bookNoDraw();
-        final Section s = Section.add(top, "set.letters", "📖 Citire text", book.learnedCount() == 0 ? "nicio literă învățată"
+        final Section s = Section.add(top, "set.letters", "Citire text", book.learnedCount() == 0 ? "nicio literă învățată"
                 : book.learnedCount() + " litere învățate");
         s.body.addView(Ui.muted(this, "Pașii „Citește” recunosc literele fonturilor telefonului. Pentru fonturi de joc ciudate, "
-                + "folosește „🔍 Testează citirea” → scrii ce e corect → „Învață”. Literele învățate intră în backup."));
+                + "folosește „Testează citirea” → scrii ce e corect → „Învață”. Literele învățate intră în backup."));
         java.util.Map<Character, Integer> chars = book.learnedChars();
         if (!chars.isEmpty()) {
             StringBuilder b = new StringBuilder();
@@ -265,11 +316,56 @@ public final class SettingsActivity extends Activity {
 
     private interface Setter { void set(int v); }
 
+    private void addSettingsTab(LinearLayout nav, final int index, String label) {
+        final TextView tab = Ui.text(this, label, 11, Ui.MUTED, true);
+        tab.setGravity(android.view.Gravity.CENTER);
+        tab.setMinHeight(Ui.dp(this, 44));
+        tab.setPadding(Ui.dp(this, 4), 0, Ui.dp(this, 4), 0);
+        tab.setBackground(Ui.rounded(Ui.SURFACE, Ui.dp(this, 10)));
+        tab.setContentDescription(label + " · secțiunea setărilor");
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, Ui.dp(this, 44), 1);
+        lp.setMargins(Ui.dp(this, 2), 0, Ui.dp(this, 2), 0);
+        nav.addView(tab, lp);
+        settingsTabs[index] = tab;
+        Ui.clickable(tab, new View.OnClickListener() {
+            @Override public void onClick(View v) { showSettingsPage(index); }
+        }, Ui.dp(this, 10));
+        tab.setBackground(Ui.rounded(index == 0 ? Ui.SURFACE_HIGH : Ui.SURFACE, Ui.dp(this, 10)));
+        if (index == 0) tab.setTextColor(Ui.ACCENT);
+    }
+
+    private void showSettingsPage(int selected) {
+        if (settingsPages == null) return;
+        for (int i = 0; i < settingsPages.length; i++) {
+            boolean active = i == selected;
+            settingsPages[i].setVisibility(active ? View.VISIBLE : View.GONE);
+            settingsTabs[i].setTextColor(active ? Ui.ACCENT : Ui.MUTED);
+            settingsTabs[i].setBackground(Ui.rounded(active ? Ui.SURFACE_HIGH : Ui.SURFACE, Ui.dp(this, 10)));
+            settingsTabs[i].setSelected(active);
+        }
+        if (settingsScroll != null) settingsScroll.post(new Runnable() {
+            @Override public void run() { settingsScroll.scrollTo(0, 0); }
+        });
+    }
+
+    private boolean accessibilityEnabled() {
+        String enabled = android.provider.Settings.Secure.getString(getContentResolver(),
+                android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+        String component = new android.content.ComponentName(this, ClickService.class).flattenToString();
+        return enabled != null && enabled.toLowerCase(java.util.Locale.ROOT)
+                .contains(component.toLowerCase(java.util.Locale.ROOT));
+    }
+
+    private void updateAccessState() {
+        if (serviceAccessStatus == null) return;
+        serviceAccessStatus.setText(accessibilityEnabled() ? "Activat" : "Dezactivat · necesar pentru panoul plutitor");
+    }
+
     // ------------------------------------------------------------------ 👂 your fingers (2.3)
     private TextView touchState;
 
     private void touchSection(LinearLayout top) {
-        LinearLayout f = Section.add(top, "set.touch", "👂 Atingerile tale (pentru scripturi)",
+        LinearLayout f = Section.add(top, "set.touch", "Atingeri pentru scripturi",
                 prefs.touchDirect() ? "ascultare directă" : "prin strat, când scriptul ascultă").body;
         touchState = Ui.muted(this, "");
         f.addView(touchState);
@@ -287,7 +383,7 @@ public final class SettingsActivity extends Activity {
             }));
         }
         f.addView(Ui.muted(this, "Funcțiile care ascultă: asteaptaAtingere(), asteaptaGest(), asteaptaDegete(2), degete(), "
-                + "asteaptaFaraDegete(), asteaptaAtingereInZona(z), alegeZona(), pipetaAtingere(); cu asculta(true): degete(), atins(), atingeriNoi()… (📖 Documentație)."));
+                + "asteaptaFaraDegete(), asteaptaAtingereInZona(z), alegeZona(), pipetaAtingere(); cu asculta(true): degete(), atins(), atingeriNoi()… (Documentație)."));
         updateTouchState();
     }
 
@@ -295,7 +391,7 @@ public final class SettingsActivity extends Activity {
         if (touchState == null) return;
         String how;
         if (prefs.touchDirect()) {
-            how = "✅ Ascultare directă: cât un script ascultă, jocul primește atingerile imediat și FreeClick aude o copie. "
+            how = "Ascultare directă: cât un script ascultă, jocul primește atingerile imediat și FreeClick aude o copie. "
                     + "Fără un script care ascultă, FreeClick nu aude nimic.";
         } else if (TouchListener.directAvailable()) {
             how = "Telefonul tău ar putea avea ascultare directă (jocul primește atingerea imediat). Testează-o: durează 5 secunde.\n"
@@ -326,7 +422,7 @@ public final class SettingsActivity extends Activity {
         box.setGravity(android.view.Gravity.CENTER);
         box.setBackground(Ui.surface(this, Ui.SURFACE_HIGH, 18));
         box.setMinHeight(Ui.dp(this, 220));
-        final android.app.AlertDialog d = new android.app.AlertDialog.Builder(this).setTitle("👂 Test: ascultare directă")
+        final android.app.AlertDialog d = new android.app.AlertDialog.Builder(this).setTitle("Test: ascultare directă")
                 .setView(box).setNegativeButton("Anulează", null).create();
         final android.os.Handler h = new android.os.Handler(android.os.Looper.getMainLooper());
         final Runnable finish = new Runnable() { public void run() {
@@ -338,7 +434,7 @@ public final class SettingsActivity extends Activity {
             if (taps[0] >= 1 && heard >= 2) {
                 prefs.setTouchDirect(true);
                 s.setTouchDirect(true);
-                msg = "✅ Merge: atingerile ajung la ecran și FreeClick le aude. O folosesc doar cât un script ascultă.";
+                msg = "Funcționează: atingerile ajung la ecran și FreeClick le aude. O folosesc doar cât un script ascultă.";
             } else {
                 s.setTouchDirect(false);
                 prefs.setTouchDirect(false);
@@ -400,12 +496,13 @@ public final class SettingsActivity extends Activity {
     private void updateBatteryState() {
         if (batteryState == null) return;
         boolean ok = ignoringBatteryOptimizations();
-        batteryState.setText(ok ? "✅ Android nu oprește FreeClick ca să economisească bateria."
-                : "⚠ Android poate opri FreeClick ca să economisească bateria (mai ales după ore).");
+        batteryState.setText(ok ? "Android nu oprește FreeClick ca să economisească bateria."
+                : "Atenție: Android poate opri FreeClick ca să economisească bateria (mai ales după ore).");
     }
 
     @Override protected void onResume() {
         super.onResume();
+        updateAccessState();
         updateBatteryState();
     }
 

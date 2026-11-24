@@ -46,10 +46,10 @@ final class ShareUi {
         final String msg = ShareCode.message(items, code);
         boolean longCode = code.length() > LONG_CODE;
         List<String> opts = new ArrayList<String>();
-        opts.add("📋 Copiază codul");
-        opts.add("💬 Trimite codul ca mesaj");
-        opts.add("📁 Trimite fișierul");
-        if (saveFile != null) opts.add("💾 Salvează fișierul…");
+        opts.add("Copiază codul");
+        opts.add("Trimite codul ca mesaj");
+        opts.add("Trimite fișierul");
+        if (saveFile != null) opts.add("Salvează fișierul…");
         String title = (items.size() == 1 ? "„" + items.get(0).name + "”" : items.size() + " salvări") + " · cod de " + kb(code.length())
                 + (longCode ? " (are poze: mai bine ca fișier)" : "");
         new AlertDialog.Builder(a).setTitle(title).setItems(opts.toArray(new String[0]), new DialogInterface.OnClickListener() {

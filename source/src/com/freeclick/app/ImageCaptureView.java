@@ -84,9 +84,9 @@ final class ImageCaptureView extends FrameLayout {
         bar.setBackground(Ui.rounded(0xF0140F45, Ui.dp(c, 18)));
         bar.setPadding(p / 2, p / 2, p / 2, p / 2);
         bar.addView(button(c, "× Renunță", 0x33FFFFFF, new OnClickListener() { public void onClick(View v) { cb.onCaptureCancel(); } }));
-        bar.addView(button(c, "🔄 Din nou", 0x33FFFFFF, new OnClickListener() { public void onClick(View v) {
+        bar.addView(button(c, "↻ Din nou", 0x33FFFFFF, new OnClickListener() { public void onClick(View v) {
             sel = null; tight = false; pick = null; line = null; reading = null; update(); } }));
-        bar.addView(button(c, "✅ Gata", Ui.ACCENT, new OnClickListener() {
+        bar.addView(button(c, "Gata", Ui.ACCENT, new OnClickListener() {
             public void onClick(View v) {
                 if (ImageCaptureView.this.mode == MODE_SWIPE) {
                     if (line == null) { hint.setText("Întâi trage cu degetul pe unde vrei swipe-ul"); return; }
@@ -147,7 +147,7 @@ final class ImageCaptureView extends FrameLayout {
 
     /** A message in the hint bubble (toasts would be hidden under this full-screen layer). */
     void showProblem(String text) {
-        hint.setText("⚠ " + text);
+        hint.setText("Atenție: " + text);
         hint.setBackground(Ui.rounded(0xF0B4233C, Ui.dp(getContext(), 18)));
     }
 
@@ -171,19 +171,19 @@ final class ImageCaptureView extends FrameLayout {
         hint.setBackground(Ui.rounded(0xE6140F45, Ui.dp(getContext(), 18)));
         if (mode == MODE_SWIPE) {
             if (line == null) hint.setText(emptyHint());
-            else hint.setText("(" + line[0] + ", " + line[1] + ") → (" + line[2] + ", " + line[3] + ") · trage din nou sau apasă ✅");
+            else hint.setText("(" + line[0] + ", " + line[1] + ") → (" + line[2] + ", " + line[3] + ") · trage din nou sau apasă Gata");
         } else if (mode == MODE_COLOR) {
             if (pick == null) hint.setText(emptyHint());
             else {
                 int rgb = frame.argb[pick[1] * frame.width + pick[0]] & 0xFFFFFF;
-                hint.setText(describeColor(rgb) + "\n(" + pick[0] + ", " + pick[1] + ") · apasă ✅");
+                hint.setText(describeColor(rgb) + "\n(" + pick[0] + ", " + pick[1] + ") · apasă Gata");
                 hint.setBackground(Ui.rounded(0xF0000000 | rgb, Ui.dp(getContext(), 18)));
                 int lum = (((rgb >> 16) & 255) * 299 + ((rgb >> 8) & 255) * 587 + (rgb & 255) * 114) / 1000;
                 hint.setTextColor(lum > 140 ? 0xFF000000 : 0xFFFFFFFF);
             }
         } else if (sel == null) hint.setText(emptyHint());
-        else if (mode == MODE_ZONE) hint.setText(sel.width() + " × " + sel.height() + " · " + (reading == null ? "citesc…" : reading) + "\ntrage de colțuri sau apasă ✅");
-        else hint.setText(sel.width() + " × " + sel.height() + (tight ? " · lipit de buton 🧲" : "") + " · trage de colțuri sau apasă ✅");
+        else if (mode == MODE_ZONE) hint.setText(sel.width() + " × " + sel.height() + " · " + (reading == null ? "citesc…" : reading) + "\ntrage de colțuri sau apasă Gata");
+        else hint.setText(sel.width() + " × " + sel.height() + (tight ? " · aliniat la buton" : "") + " · trage de colțuri sau apasă Gata");
         if (mode != MODE_COLOR || pick == null) hint.setTextColor(0xFFFFFFFF);
         canvasView.invalidate();
     }

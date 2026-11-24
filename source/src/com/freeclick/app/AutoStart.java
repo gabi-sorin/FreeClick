@@ -56,7 +56,7 @@ final class AutoStart {
         List<String> items = new ArrayList<String>();
         items.add(current == null ? "Alege aplicația…" : "Altă aplicație (acum: " + label(a, current) + ")…");
         if (current != null) items.add("Oprește pornirea automată");
-        new AlertDialog.Builder(a).setTitle("⚡ Pornire automată: „" + m.name + "”")
+        new AlertDialog.Builder(a).setTitle("Pornire automată: „" + m.name + "”")
                 .setItems(items.toArray(new String[0]), new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface d, int which) {
                         if (which == 1) {
@@ -84,7 +84,7 @@ final class AutoStart {
                             String old = appOf(m);
                             if (old != null) App.get().prefs().setAutostart(old, null); // one app per macro
                             App.get().prefs().setAutostart(pkg, value);
-                            android.widget.Toast.makeText(a, "⚡ La deschiderea " + label(a, pkg) + (which == 1 ? " pornește singur" : " apare panoul"),
+                            android.widget.Toast.makeText(a, "La deschiderea " + label(a, pkg) + (which == 1 ? " pornește singur" : " apare panoul"),
                                     android.widget.Toast.LENGTH_LONG).show();
                             if (after != null) after.run();
                         } };

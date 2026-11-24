@@ -12,8 +12,8 @@ import android.os.Build;
 import android.os.IBinder;
 
 /**
- * 🌙 AFK mode: while a long run is on, FreeClick is a foreground service with its own notification
- * ("🌙 AFK · Farm · 1 h 23 min · ciclul 412"), so Android and the phone maker's battery manager do not
+ * Sesiune AFK mode: while a long run is on, FreeClick is a foreground service with its own notification
+ * ("Sesiune AFK · Farm · 1 h 23 min · ciclul 412"), so Android and the phone maker's battery manager do not
  * stop it after a while. The notification also has Pauză / Stop (the panel controls are then in it).
  * Nothing runs here: the work stays in ClickService; this only keeps the process important.
  */
@@ -21,7 +21,7 @@ public final class SessionService extends Service {
     static final int ID = 9, ENDED_ID = 10;
     static final String CHANNEL = "afk";
 
-    private static volatile String title = "🌙 FreeClick AFK", text = "";
+    private static volatile String title = "FreeClick · sesiune AFK", text = "";
     private static volatile boolean paused;
     private static volatile boolean running;
 
@@ -59,7 +59,7 @@ public final class SessionService extends Service {
             NotificationManager nm = (NotificationManager) c.getSystemService(NOTIFICATION_SERVICE);
             channel(nm);
             Notification.Builder b = Build.VERSION.SDK_INT >= 26 ? new Notification.Builder(c, CHANNEL) : new Notification.Builder(c);
-            b.setSmallIcon(android.R.drawable.ic_dialog_info).setContentTitle("🌙 Sesiunea AFK s-a oprit").setContentText(why)
+            b.setSmallIcon(android.R.drawable.ic_dialog_info).setContentTitle("Sesiunea AFK s-a oprit").setContentText(why)
                     .setStyle(new Notification.BigTextStyle().bigText(why)).setAutoCancel(true).setContentIntent(openApp(c));
             nm.notify(ENDED_ID, b.build());
         } catch (RuntimeException ignored) { }

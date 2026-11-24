@@ -434,8 +434,9 @@ final class ShotView extends View {
             text.setTextSize(14 * dp);
             text.setColor(Ui.MUTED);
             text.setTextAlign(Paint.Align.CENTER);
-            float y = getHeight() / 2f - 20 * dp;
-            for (String line : emptyText.split("\n")) {
+            String[] lines = emptyText.split("\n");
+            float y = lines.length == 1 ? getHeight() / 2f + 5 * dp : getHeight() / 2f - 20 * dp;
+            for (String line : lines) {
                 c.drawText(line, getWidth() / 2f, y, text);
                 y += 20 * dp;
             }
@@ -529,7 +530,7 @@ final class ShotView extends View {
                 c.drawRect(x - s, y - s, x + s, y + s, fill);
                 c.drawRect(x - s, y - s, x + s, y + s, stroke);
                 int got = pixelAt(m.values[0], m.values[1]);
-                String l = m.label + (want >= 0 ? (ColorMatch.matches(got, want, m.tolerance < 0 ? 24 : m.tolerance) ? " ✅" : " ❌ aici e " + ColorMatch.toHex(got)) : "");
+                String l = m.label + (want >= 0 ? (ColorMatch.matches(got, want, m.tolerance < 0 ? 24 : m.tolerance) ? " · potrivire" : " · aici este " + ColorMatch.toHex(got)) : "");
                 label(c, l, x + s + 4 * dp, y - s, col, sel);
                 break;
             }
@@ -539,7 +540,7 @@ final class ShotView extends View {
                 for (int[] h : hits) {
                     RectF rr = new RectF(vx(h[0]), vy(h[1]), vx(h[2]), vy(h[3]));
                     c.drawRect(rr, stroke);
-                    label(c, "🖼 " + m.image, rr.left, rr.top - 4 * dp, col, sel);
+                    label(c, "IMG · " + m.image, rr.left, rr.top - 4 * dp, col, sel);
                 }
                 break;
             }

@@ -98,7 +98,7 @@ final class TurboLayer {
         android.graphics.drawable.GradientDrawable bg = Ui.rounded(0xF0251A0A, Ui.dp(ctx, 22));
         bg.setStroke(Ui.dp(ctx, 2), 0xFFFF8A3D);
         pill.setBackground(bg);
-        TextView title = Ui.text(ctx, "🔥 Turbo", 15, 0xFFFFB27A, true);
+        TextView title = Ui.text(ctx, "Turbo", 15, 0xFFFFB27A, true);
         pill.addView(title);
         hint = Ui.text(ctx, "", 13, 0xFFFFE7D6, false);
         hint.setPadding(Ui.dp(ctx, 10), 0, Ui.dp(ctx, 4), 0);

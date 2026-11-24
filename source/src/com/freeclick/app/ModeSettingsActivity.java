@@ -150,20 +150,12 @@ public final class ModeSettingsActivity extends Activity {
             repeatCountRow(s);
             speedRow(s);
         }
-        content.addView(Ui.settingRow(this, "Editează pașii unul câte unul",
-                com.freeclick.core.ActionTree.count(m.actions) + " acțiuni · ordine, pauze, cronologie", new View.OnClickListener() {
-                    @Override public void onClick(View v) {
-                        startActivity(new Intent(ModeSettingsActivity.this, EditorActivity.class)
-                                .putExtra(EditorActivity.EXTRA_WORKSPACE, true));
-                    }
-                }));
-
         // ---- ⚙ Avansat: closed by default, one drop-down per area inside (only that area's settings)
         final LinearLayout main = content;
-        Section adv = Section.add(main, "mode.adv", "⚙ Avansat", "Atingeri, Locație, Timp, Aplicație, Siguranță, Filmare");
+        Section adv = Section.add(main, "mode.adv", "Avansat", "Atingeri, locație, timp, aplicație, siguranță, filmare");
         try {
             // 🖐 Atingeri: how long each touch lasts, what is drawn on the screen
-            content = Section.nested(adv.body, "mode.touch", "🖐 Atingeri", Macro.KIND_MANUAL.equals(m.kind)
+            content = Section.nested(adv.body, "mode.touch", "Atingeri", Macro.KIND_MANUAL.equals(m.kind)
                     ? "click " + Ui.msLabel(s.tapDuration) + " · swipe " + Ui.msLabel(s.swipeDuration) : "puncte pe ecran").body;
             if (Macro.KIND_MANUAL.equals(m.kind)) {
                 content.addView(Ui.settingRow(this, "Durată click", Ui.msLabel(s.tapDuration), new View.OnClickListener() {
@@ -200,7 +192,7 @@ public final class ModeSettingsActivity extends Activity {
                         });
             }
 
-            content = Section.nested(adv.body, "mode.pos", "📍 Locație", (s.jitterPx > 0 ? "abatere " + s.jitterPx + " px" : "fără abatere")
+            content = Section.nested(adv.body, "mode.pos", "Locație", (s.jitterPx > 0 ? "abatere " + s.jitterPx + " px" : "fără abatere")
                     + (s.scaleToScreen ? " · adaptat la ecran" : "")).body;
             if (s.jitterPx > 0 || s.jitterTimePct > 0) {
                 content.addView(Ui.settingRow(this, "Abatere poziție", s.jitterPx + " [px]", new View.OnClickListener() {
@@ -217,7 +209,7 @@ public final class ModeSettingsActivity extends Activity {
                         @Override public void onCheckedChanged(CompoundButton b, boolean on) { s.scaleToScreen = on; changed(); }
                     });
 
-            content = Section.nested(adv.body, "mode.time", "⏱ Timp", (s.stopAfterMs == 0 ? "fără limită" : "stop după " + Ui.msLabel(s.stopAfterMs))
+            content = Section.nested(adv.body, "mode.time", "Timp", (s.stopAfterMs == 0 ? "fără limită" : "stop după " + Ui.msLabel(s.stopAfterMs))
                     + (s.jitterTimePct > 0 ? " · abatere " + s.jitterTimePct + "%" : "")).body;
             if (s.jitterPx > 0 || s.jitterTimePct > 0) {
                 content.addView(Ui.settingRow(this, "Abatere timp", s.jitterTimePct + " [%]", new View.OnClickListener() {
@@ -242,7 +234,7 @@ public final class ModeSettingsActivity extends Activity {
                         }
                     }));
 
-            content = Section.nested(adv.body, "mode.app", "📱 Aplicație", (s.launchPackage.isEmpty() ? "nu deschide nimic" : "deschide " + appLabel(s.launchPackage))
+            content = Section.nested(adv.body, "mode.app", "Aplicație", (s.launchPackage.isEmpty() ? "nu deschide nimic" : "deschide " + appLabel(s.launchPackage))
                     + (s.lockToPackage.isEmpty() ? "" : " · doar în " + appLabel(s.lockToPackage))).body;
             content.addView(Ui.settingRow(this, "Deschide întâi aplicația", appLabel(s.launchPackage), new View.OnClickListener() {
                 @Override public void onClick(View v) {
@@ -252,7 +244,7 @@ public final class ModeSettingsActivity extends Activity {
             final ClickService svcNow = ClickService.get();
             final Macro savedNow = svcNow != null && svcNow.isWorkspaceSaved() && svcNow.workspace() != null
                     ? App.get().repo().find(svcNow.workspace().id) : null;
-            content.addView(Ui.settingRow(this, "⚡ Pornește când deschid aplicația",
+            content.addView(Ui.settingRow(this, "Pornește când deschid aplicația",
                     savedNow == null ? "salvează întâi" : AutoStart.describe(this, savedNow), new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     if (savedNow == null) {
@@ -269,7 +261,7 @@ public final class ModeSettingsActivity extends Activity {
                 }
             }));
 
-            content = Section.nested(adv.body, "mode.safe", "🛡 Siguranță", (s.safeMode ? "mod sigur pornit" : "mod sigur oprit")
+            content = Section.nested(adv.body, "mode.safe", "Siguranță", (s.safeMode ? "mod sigur pornit" : "mod sigur oprit")
                     + (s.jitterPx > 0 || s.jitterTimePct > 0 ? " · acțiuni aleatoare" : "")).body;
             Ui.toggleRow(content, "Acțiuni aleatoare", "Fiecare atingere cade puțin diferit și pauzele variază "
                     + "(poate ajuta împotriva protecțiilor anti-bot)", s.jitterPx > 0 || s.jitterTimePct > 0,
@@ -286,7 +278,7 @@ public final class ModeSettingsActivity extends Activity {
                         @Override public void onCheckedChanged(CompoundButton b, boolean on) { s.safeMode = on; changed(); }
                     });
 
-            content = Section.nested(adv.body, "mode.video", "🎥 Filmare", s.recordVideo ? "filmează fiecare rulare" : "nu filmează").body;
+            content = Section.nested(adv.body, "mode.video", "Filmare", s.recordVideo ? "filmează fiecare rulare" : "nu filmează").body;
             Ui.toggleRow(content, "Filmează ecranul la rulare", "Salvează un MP4 în Galerie (Android cere permisiunea "
                     + "de captură la fiecare filmare)", s.recordVideo,
                     new CompoundButton.OnCheckedChangeListener() {
@@ -359,9 +351,12 @@ public final class ModeSettingsActivity extends Activity {
     }
 
     private void more(View anchor) {
-        Ui.popup(anchor, Arrays.asList("Nou (golește)", "Ajutor"), null, new Ui.OnPick() {
+        Ui.popup(anchor, Arrays.asList("Editează automatizarea", "Nou (golește)", "Ajutor"), null, new Ui.OnPick() {
             @Override public void onPick(int i) {
                 if (i == 0) {
+                    startActivity(new Intent(ModeSettingsActivity.this, EditorActivity.class)
+                            .putExtra(EditorActivity.EXTRA_WORKSPACE, true));
+                } else if (i == 1) {
                     if (svc == null) return;
                     new AlertDialog.Builder(ModeSettingsActivity.this).setTitle("Începi de la zero?")
                             .setMessage("Lucrul curent nesalvat se pierde. Cele salvate rămân în listă.")
